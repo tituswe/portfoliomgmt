@@ -1,4 +1,3 @@
-```markdown
 # MoneyStar
 
 ![Project Banner](https://placehold.co/1200x400?text=Portfolio+Management+App)
