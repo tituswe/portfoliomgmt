@@ -10,6 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Transaction } from "@/lib/types";
 
@@ -68,32 +76,44 @@ export function TransactionTable({
   }
 
   return (
-    <Table>
-      <TableCaption>Your recent transactions</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Ticker</TableHead>
-          <TableHead>Stock Name</TableHead>
-          <TableHead className="text-right">Quantity</TableHead>
-          <TableHead className="text-right">Price</TableHead>
-          <TableHead className="text-right">Date/Time</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {displayTransactions.map((transaction) => (
-          <TableRow key={transaction.id}>
-            <TableCell className="font-medium">{transaction.ticker}</TableCell>
-            <TableCell>{transaction.stockName}</TableCell>
-            <TableCell className="text-right">{transaction.quantity}</TableCell>
-            <TableCell className="text-right">
-              ${transaction.transactionPrice.toFixed(2)}
-            </TableCell>
-            <TableCell className="text-right">
-              {new Date(transaction.transactionTime).toLocaleString()}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <Card>
+      <CardHeader className="items-center pb-4">
+        <CardTitle>Portfolio</CardTitle>
+        <CardDescription>View your current stock positions</CardDescription>
+      </CardHeader>
+      <CardContent className="pb-0">
+        <Table>
+          <TableCaption>Your recent transactions</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Ticker</TableHead>
+              <TableHead>Stock Name</TableHead>
+              <TableHead className="text-right">Quantity</TableHead>
+              <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-right">Date/Time</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {displayTransactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell className="font-medium">
+                  {transaction.ticker}
+                </TableCell>
+                <TableCell>{transaction.stockName}</TableCell>
+                <TableCell className="text-right">
+                  {transaction.quantity}
+                </TableCell>
+                <TableCell className="text-right">
+                  ${transaction.transactionPrice.toFixed(2)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {new Date(transaction.transactionTime).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
