@@ -1,8 +1,8 @@
 # MoneyStar
 
-![Project Banner](https://placehold.co/1200x400?text=Portfolio+Management+App)
+![Project Banner](https://placehold.co/1200x400/022c43/ffffff?text=MoneyStar+Portfolio+Tracker&font=montserrat)
 
-A full-stack application for managing financial portfolios, built with React and Next.js for the frontend, FastAPI for the REST API backend, and Supabase for database and authentication services.
+Track investments effortlessly with MoneyStar – built on Next.js, React, FastAPI & Supabase.
 
 ## Features
 
@@ -10,12 +10,6 @@ A full-stack application for managing financial portfolios, built with React and
   - Add, view, update, and delete portfolio items (stocks, bonds, cash)
   - Track portfolio performance over time
   - Visualize portfolio distribution and growth
-
-- **Technical Stack**
-  - Framework: Next.js
-  - Frontend: React
-  - Backend: FastAPI
-  - Database: SupaBase
 
 ## Getting Started
 
@@ -29,8 +23,8 @@ A full-stack application for managing financial portfolios, built with React and
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/portfolio-management-app.git
-   cd portfolio-management-app
+   git clone https://github.com/your-username/portfoliomgmt.git
+   cd portfoliomgmt
    ```
 
 2. Install dependencies:
