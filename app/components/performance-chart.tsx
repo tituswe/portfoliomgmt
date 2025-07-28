@@ -18,13 +18,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const description = "An interactive area chart";
@@ -217,7 +210,7 @@ export function PerformanceChart() {
         <div className="grid flex-1 gap-1">
           <CardTitle>Portfolio Performance</CardTitle>
           <CardDescription>
-            Total return over the {dateRangeLabels[timeRange]}. 
+            Total return over the {dateRangeLabels[timeRange]}
           </CardDescription>
           <div style={{ color: gainColor, fontSize: 14}}>
             {totalGain >= 0 ? "+" : "-"}${Math.abs(totalGain).toFixed(2)} (
