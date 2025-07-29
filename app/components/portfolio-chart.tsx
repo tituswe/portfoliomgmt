@@ -51,13 +51,13 @@ export function PortfolioChart() {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Top 5 Current Holdings</CardTitle>
+        <CardTitle>Top 5 Current Holdings Portfolio Distribution</CardTitle>
         <CardDescription>Equities Holdings Cross-Section</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[330px]"
+          className="[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[320px]"
         >
           <PieChart>
             <ChartTooltip

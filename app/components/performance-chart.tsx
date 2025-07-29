@@ -195,11 +195,11 @@ export function PerformanceChart() {
 
   const firstValue = filteredData[0].value;
   const lastValue = filteredData[filteredData.length - 1].value;
-  const isGain = lastValue <= firstValue;
+  const isGain = lastValue >= firstValue;
   const totalGain = lastValue - firstValue;
   const percentageGain = firstValue !== 0 ? (totalGain / firstValue) * 100 : 0;
 
-  const gainColor = isGain ? "#0f9d58" : "#0f9d58";
+  const gainColor = isGain ? "#0f9d58" : "#db4437";
 
   return (
     <Card className="pt-0 h-full">

@@ -16,10 +16,10 @@ export default function Home() {
         <div className="col-span-2 flex flex-col space-y-6">
           <PerformanceChart />
           <div className="grid grid-cols-2 gap-6 h-full">
-            <div className="col-span-1">
+            <div className="col-span-1 flex flex-col">
               <PortfolioChart />
             </div>
-            <div className="col-span-1">
+            <div className="col-span-1 flex flex-col">
               <HoldingsChart />
             </div>
           </div>
