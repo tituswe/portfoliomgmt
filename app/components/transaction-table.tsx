@@ -50,7 +50,7 @@ export function TransactionTable() {
   const handleDelete = async (transactionId: string) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/transactions/${transactionId}`,
+        `http://127.0.0.1:8000/transaction/${transactionId}`,
         {
           method: "DELETE",
         }
@@ -58,7 +58,7 @@ export function TransactionTable() {
 
       if (!response.ok) throw new Error("Delete failed");
 
-      setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
+      window.location.href = "/";
     } catch (error) {
       console.error("Delete error:", error);
     }

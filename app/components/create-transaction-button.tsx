@@ -82,7 +82,6 @@ export function CreateTransactionButton() {
           <FilePlus2 />
         </Button>
       </DialogTrigger>
-
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Log a transaction</DialogTitle>
