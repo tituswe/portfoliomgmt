@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Transaction } from "@/lib/types";
+import { CreateTransactionButton } from "./create-transaction-button";
 
 export function TransactionTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -31,6 +32,7 @@ export function TransactionTable() {
         setError(null);
 
         const response = await fetch("http://127.0.0.1:8000/transactions");
+        console.log(response);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -76,9 +78,12 @@ export function TransactionTable() {
 
   return (
     <Card>
-      <CardHeader className="items-center pb-4">
+      <CardHeader className="relative items-center pb-4">
         <CardTitle>Portfolio</CardTitle>
         <CardDescription>Your current stock positions</CardDescription>
+        <div className="absolute top-0 right-6">
+          <CreateTransactionButton />
+        </div>
       </CardHeader>
       <CardContent>
         <Table>

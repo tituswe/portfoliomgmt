@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FilePlus2, Plus } from "lucide-react";
 
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
@@ -44,15 +45,42 @@ export function CreateTransactionButton() {
     },
   });
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     console.log("Form submitted with values:", values);
-    reset(); // Optional: resets the form after submit
+
+    try {
+      const response = await fetch("http://localhost:8000/transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("Server error:", error.detail);
+        alert("Failed to submit transaction: " + error.detail);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Transaction created:", data);
+
+      reset();
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Network or unexpected error:", err);
+      alert("An unexpected error occurred");
+    }
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Transaction</Button>
+        <Button variant="secondary" size="icon">
+          <FilePlus2 />
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
