@@ -23,6 +23,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { MoreVertical, Trash2, Edit } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Transaction } from "@/lib/types";
@@ -32,6 +40,34 @@ export function TransactionTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
+    null
+  );
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
+
+  const handleDelete = async (transactionId: string) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/transactions/${transactionId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) throw new Error("Delete failed");
+
+      setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
+
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    // You would open your edit form here
+  };
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -68,33 +104,6 @@ export function TransactionTable() {
 
     fetchTransactions();
   }, []);
-
-  const handleDelete = async (transactionId: string) => {
-    // try {
-    //   const response = await fetch(
-    //     `http://127.0.0.1:8000/transactions/${transactionId}`,
-    //     {
-    //       method: "DELETE",
-    //     }
-    //   );
-    //   if (!response.ok) throw new Error("Delete failed");
-    // } catch (error) {
-    //   console.error("Delete error:", error);
-    //   setError("Failed to delete transaction");
-    // }
-  };
-
-  const [editingTransaction, setEditingTransaction] =
-    useState<Transaction | null>(null);
-
-  const handleEdit = (transactionId: string) => {
-    const transactionToEdit = transactions.find((t) => t.id === transactionId);
-    if (transactionToEdit) {
-      setEditingTransaction(transactionToEdit);
-      // Open your edit modal/dialog here
-      console.log("Editing transaction:", transactionToEdit);
-    }
-  };
 
   if (loading) {
     return <Skeleton className="w-full h-[400px]" />;
@@ -157,29 +166,63 @@ export function TransactionTable() {
                         className="h-8 w-8 hover:bg-gray-100"
                       >
                         <MoreVertical className="h-4 w-4" />
-                        <span className="sr-only">Settings</span>
+                        <span className="sr-only">Actions</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-40">
                       <DropdownMenuItem
-                        onClick={() => handleEdit(transaction.id)}
-                        className="cursor-pointer"
+                        onClick={() => handleEdit(transaction)}
+                        className="cursor-pointer focus:bg-gray-100"
                       >
                         <Edit className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => handleDelete(transaction.id)}
+                        onClick={() => {
+                          setTransactionToDelete(transaction.id);
+                          setDeleteDialogOpen(true);
+                        }}
                         className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
+            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              <DialogContent showCloseButton>
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the transaction.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeleteDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      if (transactionToDelete) {
+                        handleDelete(transactionToDelete);
+                        setDeleteDialogOpen(false);
+                      }
+                    }}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </TableBody>
         </Table>
       </CardContent>
