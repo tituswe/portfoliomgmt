@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FilePlus2, Plus } from "lucide-react";
+import { createTransaction } from "@/lib/api";
 
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
@@ -49,24 +50,7 @@ export function CreateTransactionButton() {
     console.log("Form submitted with values:", values);
 
     try {
-      const response = await fetch("http://localhost:8000/transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Server error:", error.detail);
-        alert("Failed to submit transaction: " + error.detail);
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Transaction created:", data);
-
+      await createTransaction(values);
       reset();
       window.location.href = "/";
     } catch (err) {

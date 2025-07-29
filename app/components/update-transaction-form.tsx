@@ -20,6 +20,7 @@ import { Edit, FilePlus2, Plus } from "lucide-react";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Transaction } from "@/lib/types";
+import { updateTransaction } from "@/lib/api";
 
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
@@ -58,27 +59,12 @@ export function UpdateTransactionButton({
 
   async function onSubmit(values: FormValues) {
     try {
-      const response = await fetch(
-        `http://localhost:8000/transaction/${transaction.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Server error:", error.detail);
-        alert("Failed to submit transaction: " + error.detail);
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Transaction updated:", data);
-
+      const transactionUpdate: Transaction = {
+        ...values,
+        id: transaction.id, // Ensure the ID is included for the update
+        transaction_date: new Date(values.transaction_date).toISOString(),
+      };
+      await updateTransaction(transactionUpdate);
       window.location.href = "/";
       reset();
     } catch (err) {
