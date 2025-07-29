@@ -1,8 +1,8 @@
 export type Transaction = {
   id: string; // UUID
   ticker: string;
-  stockName: string;
+  name: string;
   quantity: number;
-  transactionTime: string; // ISO 8601 timestamp
-  transactionPrice: number;
+  price: number;
+  transaction_date: string; // ISO 8601 timestamp
 };

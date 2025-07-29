@@ -23,7 +23,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   quantity: z.number().min(1, "Quantity must be at least 0"),
   price: z.number().min(1, "Price must be at least 0"),
-  transactionDate: z.string().min(1, "Date is required"),
+  transaction_date: z.string().min(1, "Date is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -41,7 +41,7 @@ export function CreateTransactionButton() {
       name: "",
       quantity: undefined,
       price: undefined,
-      transactionDate: "",
+      transaction_date: "",
     },
   });
 
@@ -136,15 +136,15 @@ export function CreateTransactionButton() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="transactionDate">Transaction Date</Label>
+            <Label htmlFor="transaction_date">Transaction Date</Label>
             <Input
-              id="transactionDate"
+              id="transaction_date"
               type="date"
-              {...register("transactionDate")}
+              {...register("transaction_date")}
             />
-            {errors.transactionDate && (
+            {errors.transaction_date && (
               <p className="text-sm text-red-500">
-                {errors.transactionDate.message}
+                {errors.transaction_date.message}
               </p>
             )}
           </div>

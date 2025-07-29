@@ -35,6 +35,7 @@ import { MoreVertical, Trash2, Edit } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Transaction } from "@/lib/types";
 import { CreateTransactionButton } from "./create-transaction-button";
+import { UpdateTransactionButton } from "./update-transaction-form";
 
 export function TransactionTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -44,8 +45,6 @@ export function TransactionTable() {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   );
-  const [editingTransaction, setEditingTransaction] =
-    useState<Transaction | null>(null);
 
   const handleDelete = async (transactionId: string) => {
     try {
@@ -64,11 +63,6 @@ export function TransactionTable() {
     }
   };
 
-  const handleEdit = (transaction: Transaction) => {
-    setEditingTransaction(transaction);
-    // You would open your edit form here
-  };
-
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -83,15 +77,22 @@ export function TransactionTable() {
         }
 
         const result = await response.json();
+        const data: Transaction[] = result.data;
 
-        const formattedData = result.data.map((item: any) => ({
-          id: item.id,
-          ticker: item.ticker,
-          stockName: item.name,
-          quantity: item.quantity,
-          transactionPrice: item.price,
-          transactionTime: new Date(item.transaction_date).toISOString(),
-        }));
+        const formattedData = data
+          .map((item: any) => ({
+            id: item.id,
+            ticker: item.ticker,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            transaction_date: new Date(item.transaction_date).toISOString(),
+          }))
+          .sort(
+            (a, b) =>
+              new Date(a.transaction_date).getTime() -
+              new Date(b.transaction_date).getTime()
+          );
 
         setTransactions(formattedData);
       } catch (err) {
@@ -147,15 +148,15 @@ export function TransactionTable() {
                 <TableCell className="font-medium">
                   {transaction.ticker}
                 </TableCell>
-                <TableCell>{transaction.stockName}</TableCell>
+                <TableCell>{transaction.name}</TableCell>
                 <TableCell className="text-right">
                   {transaction.quantity}
                 </TableCell>
                 <TableCell className="text-right">
-                  ${transaction.transactionPrice}
+                  ${transaction.price}
                 </TableCell>
                 <TableCell className="text-right">
-                  {new Date(transaction.transactionTime).toLocaleString()}
+                  {new Date(transaction.transaction_date).toLocaleString()}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -170,13 +171,7 @@ export function TransactionTable() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem
-                        onClick={() => handleEdit(transaction)}
-                        className="cursor-pointer focus:bg-gray-100"
-                      >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
+                      <UpdateTransactionButton transaction={transaction} />
                       <DropdownMenuItem
                         onClick={() => {
                           setTransactionToDelete(transaction.id);
