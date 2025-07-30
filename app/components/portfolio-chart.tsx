@@ -1,7 +1,6 @@
 "use client";
 
-import { Pie, PieChart } from "recharts";
-
+import { Pie, PieChart, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -16,43 +15,79 @@ import {
   ChartLegendContent,
   ChartTooltip,
 } from "@/components/ui/chart";
+import { useEffect, useState } from "react";
 
-export const description = "A pie chart with a label list";
+interface HoldingData {
+  ticker: string;
+  value: number;
+}
 
-const chartData = [
-  { ticker: "aapl", value: 275, fill: "var(--color-blue-100)" },
-  { ticker: "tsla", value: 200, fill: "var(--color-blue-200)" },
-  { ticker: "nvda", value: 187, fill: "var(--color-blue-300)" },
-  { ticker: "msft", value: 173, fill: "var(--color-blue-400)" },
-  { ticker: "amzn", value: 123, fill: "var(--color-blue-500)" },
-  { ticker: "others", value: 90, fill: "var(--color-blue-600)" },
+const COLORS = [
+  "#8884d8", // Blue
+  "#82ca9d", // Green
+  "#ffc658", // Yellow
+  "#ff8042", // Orange
+  "#a4de6c", // Light Green
+  "#d0ed57", // Lime
+  "#83a6ed", // Light Blue
 ];
 
-const generateChartConfig = (data: typeof chartData): ChartConfig => {
-  const config: ChartConfig = {
-    value: {
-      label: "Value", 
-    },
+export function PortfolioChart() {
+  const [chartData, setChartData] = useState<HoldingData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          "http://127.0.0.1:8000/portfolio/distribution"
+        );
+        if (!response.ok) throw new Error("Failed to fetch distribution data");
+
+        const data = await response.json();
+        setChartData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const generateChartConfig = (data: HoldingData[]): ChartConfig => {
+    const config: ChartConfig = {
+      value: {
+        label: "Value",
+      },
+    };
+
+    data.forEach((item) => {
+      config[item.ticker] = {
+        label: item.ticker,
+        color: COLORS[data.indexOf(item) % COLORS.length],
+      };
+    });
+    return config;
   };
 
-  data.forEach((item) => {
-    config[item.ticker] = {
-      label: item.ticker != "others" ? item.ticker.toUpperCase() : "Others", 
-      color: item.fill, 
-    };
-  });
-  return config;
-};
-
-export function PortfolioChart() {
   const chartConfig = generateChartConfig(chartData);
   const totalValue = chartData.reduce((sum, entry) => sum + entry.value, 0);
+
+  if (loading)
+    return <div className="p-4">Loading portfolio distribution...</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (chartData.length === 0)
+    return <div className="p-4">No holdings data available</div>;
 
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Top 5 Current Holdings Portfolio Distribution</CardTitle>
-        <CardDescription>Equities Holdings Cross-Section</CardDescription>
+        <CardTitle>Portfolio Distribution</CardTitle>
+        <CardDescription>Current holdings by value</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -63,40 +98,58 @@ export function PortfolioChart() {
             <ChartTooltip
               cursor={false}
               content={({ active, payload }) => {
-              if (!active || !payload || payload.length === 0) return null;
+                if (!active || !payload || payload.length === 0) return null;
 
-              const value = payload[0].payload.value;
-              const ticker = payload[0].payload.ticker;
-              const percentage = totalValue > 0
-                ? ((value / totalValue) * 100).toFixed(1) // Formats to one decimal place
-                : "0.0"; // Handle division by zero
+                const value = payload[0].value;
+                const ticker = payload[0].name;
+                const percentage =
+                  totalValue > 0
+                    ? ((value / totalValue) * 100).toFixed(1)
+                    : "0.0";
 
-              return (
-                <div
-                  style={{
-                    background: "white",
-                    padding: "8px 12px",
-                    borderRadius: 6,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    fontSize: 12,
-                    color: "#000",
-                    pointerEvents: "none",
-                  }}
-                >
-                  <strong><div>{chartConfig[ticker as keyof typeof chartConfig]?.label || ticker.toUpperCase()}</div></strong>
-                  <div>${value} USD</div>
-                  <div>{percentage}%</div>
-                </div>
-              );
-            }}
+                return (
+                  <div className="bg-white p-3 rounded shadow border">
+                    <strong>{ticker}</strong>
+                    <div>
+                      $
+                      {value?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </div>
+                    <div>{percentage}% of portfolio</div>
+                  </div>
+                );
+              }}
             />
-            <Pie data={chartData} dataKey="value" />
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="ticker"
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              paddingAngle={2}
+              label={({ ticker }) => (
+                <text fontSize={12} x={0} y={0} textAnchor="middle">
+                  {ticker}
+                </text>
+              )}
+              labelLine={false}
+            >
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
             <ChartLegend
               content={<ChartLegendContent nameKey="ticker" />}
-              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+              className="mt-4 flex-wrap justify-center gap-4"
             />
           </PieChart>
-          
         </ChartContainer>
       </CardContent>
     </Card>
