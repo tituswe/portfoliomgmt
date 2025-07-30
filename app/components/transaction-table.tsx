@@ -89,7 +89,7 @@ export function TransactionTable() {
   }, []);
 
   if (loading) {
-    return <Skeleton className="w-full h-[400px]" />;
+    return <Skeleton className="w-full h-[calc(100vh-8rem)]" />;
   }
 
   if (error) {
@@ -106,8 +106,10 @@ export function TransactionTable() {
   return (
     <Card className="h-[calc(100vh-8rem)] flex flex-col">
       <CardHeader className="relative items-center">
-        <CardTitle>Portfolio</CardTitle>
-        <CardDescription>Your current stock positions</CardDescription>
+        <CardTitle>Transactions</CardTitle>
+        <CardDescription>
+          Your historical transactions over time
+        </CardDescription>
         <div className="absolute top-0 right-6">
           <CreateTransactionButton />
         </div>
