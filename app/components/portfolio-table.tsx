@@ -79,6 +79,7 @@ export function PortfolioTable() {
               <TableRow>
                 <TableHead className="w-24 pl-6">Ticker</TableHead>
                 <TableHead>Stock Name</TableHead>
+                <TableHead className="text-right w-28">Qty</TableHead>
                 <TableHead className="text-right w-28">Avg Price</TableHead>
                 <TableHead className="text-right w-28">Market Value</TableHead>
                 <TableHead className="text-right w-28">Delta</TableHead>
@@ -89,27 +90,30 @@ export function PortfolioTable() {
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <Table>
               <TableBody>
-                {data.map((transaction, index) => (
+                {data.map((pos, index) => (
                   <TableRow key={index} className="h-16">
                     <TableCell className="font-medium w-24 pl-6">
-                      {transaction.ticker}
+                      {pos.ticker}
                     </TableCell>
-                    <TableCell>{transaction.name}</TableCell>
+                    <TableCell>{pos.name}</TableCell>
                     <TableCell className="text-right w-28">
-                      {transaction.avg_price.toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-right w-28">
-                      {transaction.live_price.toFixed(2)}
+                      {pos.quantity}
                     </TableCell>
                     <TableCell className="text-right w-28">
-                      {transaction.pct_delta.toFixed(1)}%
+                      {pos.avg_price.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-right w-28">
+                      {pos.live_price.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-right w-28">
+                      {pos.pct_delta.toFixed(1)}%
                     </TableCell>
                     <TableCell
                       className={`text-right w-28 ${
-                        transaction.pnl >= 0 ? "text-green-500" : "text-red-500"
+                        pos.pnl >= 0 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                      {transaction.pnl.toFixed(2)}
+                      {pos.pnl.toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
