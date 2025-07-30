@@ -102,6 +102,8 @@ export function PortfolioChart() {
 
                 const value = payload[0].value;
                 const ticker = payload[0].name;
+
+                if (typeof value !== "number" || !ticker) return null;
                 const percentage =
                   totalValue > 0
                     ? ((value / totalValue) * 100).toFixed(1)
@@ -117,7 +119,7 @@ export function PortfolioChart() {
                         maximumFractionDigits: 2,
                       })}
                     </div>
-                    <div>{percentage}% of portfolio</div>
+                    <div>{percentage}% of Portfolio</div>
                   </div>
                 );
               }}
@@ -128,7 +130,7 @@ export function PortfolioChart() {
               nameKey="ticker"
               cx="50%"
               cy="50%"
-              innerRadius={60}
+              innerRadius={40}
               outerRadius={80}
               paddingAngle={2}
               label={({ ticker }) => (
