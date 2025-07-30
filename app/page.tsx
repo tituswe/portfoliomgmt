@@ -1,10 +1,8 @@
 import { NavBar } from "@/components/nav-bar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionTable } from "./components/transaction-table";
 import { PerformanceChart } from "./components/performance-chart";
 import { PortfolioChart } from "./components/portfolio-chart";
 import { HoldingsChart } from "./components/holdings-chart";
-import { CreateTransactionButton } from "./components/create-transaction-button";
 
 export default function Home() {
   return (
