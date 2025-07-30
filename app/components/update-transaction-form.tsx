@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, FilePlus2, Plus } from "lucide-react";
+import { Edit } from "lucide-react";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Transaction } from "@/lib/types";

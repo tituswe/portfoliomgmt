@@ -89,7 +89,7 @@ export function TransactionTable() {
   }, []);
 
   if (loading) {
-    return <Skeleton className="w-full h-[400px]" />;
+    return <Skeleton className="w-full h-[calc(100vh-8rem)]" />;
   }
 
   if (error) {
@@ -106,106 +106,110 @@ export function TransactionTable() {
   return (
     <Card className="h-[calc(100vh-8rem)] flex flex-col">
       <CardHeader className="relative items-center">
-        <CardTitle>Portfolio</CardTitle>
-        <CardDescription>Your current stock positions</CardDescription>
+        <CardTitle>Transactions</CardTitle>
+        <CardDescription>
+          Your historical transactions over time
+        </CardDescription>
         <div className="absolute top-0 right-6">
           <CreateTransactionButton />
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden px-2 py-0">
-        <ScrollArea className="h-full px-4 py-0">
+      <CardContent className="flex-1 overflow-hidden px-0 py-0">
+        <div className="overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 z-10">
               <TableRow>
-                <TableHead>Ticker</TableHead>
+                <TableHead className="w-36 pl-6">Ticker</TableHead>
                 <TableHead>Stock Name</TableHead>
-                <TableHead className="text-right">Quantity</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">Date/Time</TableHead>
+                <TableHead className="text-right w-24">Quantity</TableHead>
+                <TableHead className="text-right w-32">Price</TableHead>
+                <TableHead className="text-right w-48">Date/Time</TableHead>
+                <TableHead className="text-right w-24 pr-6"></TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell className="font-medium">
-                    {transaction.ticker}
-                  </TableCell>
-                  <TableCell>{transaction.name}</TableCell>
-                  <TableCell className="text-right">
-                    {transaction.quantity}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    ${transaction.price}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {new Date(transaction.transaction_date).toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-gray-100"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40">
-                        <UpdateTransactionButton transaction={transaction} />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setTransactionToDelete(transaction.id);
-                            setDeleteDialogOpen(true);
-                          }}
-                          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-              <Dialog
-                open={deleteDialogOpen}
-                onOpenChange={setDeleteDialogOpen}
-              >
-                <DialogContent showCloseButton>
-                  <DialogHeader>
-                    <DialogTitle>Confirm Deletion</DialogTitle>
-                    <DialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      the transaction.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        if (transactionToDelete) {
-                          handleDelete(transactionToDelete);
-                          setDeleteDialogOpen(false);
-                        }
-                      }}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </TableBody>
           </Table>
-        </ScrollArea>
+          <ScrollArea className="h-[calc(100vh-12rem)]">
+            <Table>
+              <TableBody>
+                {transactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell className="font-medium w-36 pl-6">
+                      {transaction.ticker}
+                    </TableCell>
+                    <TableCell>{transaction.name}</TableCell>
+                    <TableCell className="text-right w-24">
+                      {transaction.quantity}
+                    </TableCell>
+                    <TableCell className="text-right w-32">
+                      ${transaction.price}
+                    </TableCell>
+                    <TableCell className="text-right w-48">
+                      {new Date(transaction.transaction_date).toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right w-24 pr-6">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-gray-100"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">Actions</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <UpdateTransactionButton transaction={transaction} />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setTransactionToDelete(transaction.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                            className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </div>
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent showCloseButton>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete the
+                transaction.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (transactionToDelete) {
+                    handleDelete(transactionToDelete);
+                    setDeleteDialogOpen(false);
+                  }
+                }}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

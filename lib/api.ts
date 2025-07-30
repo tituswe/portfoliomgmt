@@ -1,5 +1,15 @@
 import { apiUrl } from "./env";
-import { Transaction } from "./types";
+import { Postition, Transaction } from "./types";
+
+export function getPortfolio(): Promise<Postition[]> {
+  return fetch(`${apiUrl}/portfolio`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch portfolio data");
+      }
+      return response.json();
+    });
+}
 
 export function getTransactions(): Promise<Transaction[]> {
   return fetch(`${apiUrl}/transactions`)
