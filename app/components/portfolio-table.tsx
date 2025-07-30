@@ -89,8 +89,8 @@ export function PortfolioTable() {
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <Table>
               <TableBody>
-                {data.map((transaction) => (
-                  <TableRow key={transaction.id} className="h-16">
+                {data.map((transaction, index) => (
+                  <TableRow key={index} className="h-16">
                     <TableCell className="font-medium w-24 pl-6">
                       {transaction.ticker}
                     </TableCell>
