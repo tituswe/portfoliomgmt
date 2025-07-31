@@ -35,10 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="bg-lime-500">
-            <NavBar />
-            {children}
-          </div>
+          {children}
         </ThemeProvider>
       </body>
     </html>
