@@ -4,10 +4,12 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { mockPositions } from "./data";
+import { mockPositions, mockTransactions } from "./data";
+import { Transaction } from "@/lib/types";
 
 export default function Page() {
-  const data = mockPositions;
+  const portfolioData = mockPositions;
+  const transactionData = mockTransactions;
 
   return (
     <SidebarProvider
@@ -28,7 +30,10 @@ export default function Page() {
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
               </div>
-              <DataTable data={data} />
+              <DataTable
+                portfolioData={portfolioData}
+                transactionData={transactionData}
+              />
             </div>
           </div>
         </div>

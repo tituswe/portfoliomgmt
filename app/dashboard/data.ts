@@ -1,4 +1,4 @@
-import { Position } from "@/lib/types";
+import { Position, Transaction } from "@/lib/types";
 
 export const mockPositions: Position[] = [
   {
@@ -222,3 +222,34 @@ export const mockPositions: Position[] = [
     pnl: -27.00,
   },
 ];
+
+export const mockTransactions: Transaction[] = Array.from({ length: 50 }, (_, i) => {
+  const tickers = [
+    { ticker: "AAPL", name: "Apple Inc." },
+    { ticker: "MSFT", name: "Microsoft Corp." },
+    { ticker: "GOOGL", name: "Alphabet Inc." },
+    { ticker: "TSLA", name: "Tesla Inc." },
+    { ticker: "AMZN", name: "Amazon.com Inc." },
+    { ticker: "NVDA", name: "NVIDIA Corp." },
+    { ticker: "META", name: "Meta Platforms" },
+    { ticker: "NFLX", name: "Netflix Inc." },
+  ];
+
+  const t = tickers[Math.floor(Math.random() * tickers.length)];
+
+  const quantity = Math.floor(Math.random() * 40 - 20); // -20 to 20
+  const price = Math.floor(Math.random() * 1000) + 100; // 100 to 1100
+
+  const startDate = new Date("2024-01-01").getTime();
+  const endDate = new Date("2024-06-30").getTime();
+  const randomDate = new Date(startDate + Math.random() * (endDate - startDate));
+
+  return {
+    id: `txn-${i + 1}`,
+    ticker: t.ticker,
+    name: t.name,
+    quantity: quantity === 0 ? 1 : quantity, // avoid 0 qty
+    price,
+    transaction_date: randomDate.toISOString().split("T")[0],
+  };
+});
