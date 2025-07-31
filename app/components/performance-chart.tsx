@@ -172,7 +172,9 @@ export function PerformanceChart() {
                         day: "numeric",
                       })}
                     </p>
-                    <p className="text-sm">Value: ${payload[0].value}</p>
+                    <p className="text-sm">
+                      Value: ${payload[0].value?.toFixed(2)}
+                    </p>
                   </div>
                 );
               }}
