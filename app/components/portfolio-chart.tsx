@@ -110,7 +110,7 @@ export function PortfolioChart() {
                     : "0.0";
 
                 return (
-                  <div className="bg-white p-3 rounded shadow border">
+                  <div className="bg-background p-3 rounded shadow border">
                     <strong>{ticker}</strong>
                     <div>
                       $
