@@ -164,7 +164,7 @@ export function PerformanceChart() {
                 if (!active || !payload || payload.length === 0) return null;
 
                 return (
-                  <div className="bg-white p-3 rounded shadow border">
+                  <div className="bg-background p-3 rounded shadow border">
                     <p className="font-medium">
                       {new Date(label).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -173,7 +173,7 @@ export function PerformanceChart() {
                       })}
                     </p>
                     <p className="text-sm">
-                      Value: ${payload[0].value?.toFixed(2)}
+                      Value: ${(payload[0].value as number)?.toFixed(2)}
                     </p>
                   </div>
                 );
