@@ -16,19 +16,36 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart"
 import { TrendingDown, TrendingUp } from "lucide-react"
+import { useEffect, useState } from "react"
 
-const chartData = [
-  { ticker: "aapl", value: 186, prev_value: 180},
-  { ticker: "tsla", value: 205, prev_value: 230 },
-  { ticker: "nvdia", value: 300, prev_value: 290},
-  { ticker: "msft", value: 173, prev_value: 180 },
-  { ticker: "amzn", value: 209, prev_value: 198 },
-]
-
-const totalData = {
-  value: 3000, 
-  prev_value: 2800,
+interface ChartData {
+  ticker: string;
+  value: number;
+  prev_value: number;
 }
+
+interface CalculatedData extends ChartData {
+  fixed_change: number;
+  percentage: string;
+}
+
+interface TotalData {
+  value: number;
+  prev_value: number;
+}
+
+// const chartData = [
+//   { ticker: "aapl", value: 186, prev_value: 180},
+//   { ticker: "tsla", value: 205, prev_value: 230 },
+//   { ticker: "nvdia", value: 300, prev_value: 290},
+//   { ticker: "msft", value: 173, prev_value: 180 },
+//   { ticker: "amzn", value: 209, prev_value: 198 },
+// ]
+
+// const totalData = {
+//   value: 3000, 
+//   prev_value: 2800,
+// }
 
 const chartConfig = {
   value: {
@@ -37,8 +54,8 @@ const chartConfig = {
 } satisfies ChartConfig
 
 
-const generateDataValues = (data: typeof chartData) => {
-  const updatedChartData = data.map((item) => {
+const generateDataValues = (data: ChartData[]) : CalculatedData[] => {
+  const updatedChartData : CalculatedData[] = data.map((item) => {
     const fixed_change = item.value - item.prev_value;
     const percentage = item.prev_value !== 0
       ? ((fixed_change / item.prev_value) * 100).toFixed(2)
@@ -55,7 +72,43 @@ const generateDataValues = (data: typeof chartData) => {
 };
 
 export function HoldingsChart() {
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [totalData, setTotalData] = useState<TotalData>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const updatedChartData = generateDataValues(chartData); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          "http://127.0.0.1:8000/portfolio/topholdingsperformance"
+        );
+        if (!response.ok) throw new Error("Failed to fetch holdings data");
+
+        const data = await response.json();
+        setChartData(data);
+
+        const totalResponse = await fetch(
+          "http://127.0.0.1:8000/portfolio/monthchange"
+        );
+        if (!totalResponse.ok) throw new Error("Failed to fetch monthly change data");   
+        const data2 = await totalResponse.json();
+        setTotalData(data2);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };  
+    fetchData();
+  }, []);
+
+  if (loading)
+    return <div className="p-4">Loading holdings data...</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (updatedChartData.length === 0) return <div className="p-4">No holdings data available</div>;
 
   return (
     <Card className="h-full flex flex-col">
@@ -72,6 +125,7 @@ export function HoldingsChart() {
               cursor={false}
               content={({ active, payload }) => {
               if (!active || !payload || payload.length === 0) return null;
+              const ticker = payload[0].payload.ticker.toUpperCase();
               const fixed_change = payload[0].payload.fixed_change;
               const percentage = payload[0].payload.percentage;
               return (
@@ -86,8 +140,15 @@ export function HoldingsChart() {
                     pointerEvents: "none",
                   }}
                 >
-                  {fixed_change > 0 ? <div>${fixed_change} USD</div> : <div>-${Math.abs(fixed_change)} USD</div>}
-                  <div>{percentage}%</div>
+                  <strong>{ticker}</strong>
+                  {fixed_change > 0 ? <div>${fixed_change?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}</div> : <div>-${Math.abs(fixed_change)?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}</div>}
+                  <div>{percentage}% Change</div>
                 </div>
               );
             }}
@@ -106,12 +167,24 @@ export function HoldingsChart() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        {totalData.value > totalData.prev_value ? 
-          <div className="flex items-center gap-2 leading-none font-medium"> Overall Portfolio up by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingUp className="text-green-600"/>  </div> 
-        : <div className="flex items-center gap-2 leading-none font-medium"> Overall Portfolio down by -{Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingDown className="text-red-600"/> </div> 
-        }
-      </CardFooter>
+      {totalData ? (
+        <CardFooter className="flex-col gap-2 text-sm">
+          {totalData.value > totalData.prev_value ? 
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Overall Portfolio up by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingUp className="text-green-600"/>  
+            </div> 
+          : 
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Overall Portfolio down by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingDown className="text-red-600"/> 
+            </div> 
+          
+          }
+        </CardFooter>)
+        : (
+          <CardFooter className="text-muted-foreground text-sm">
+            Monthly portfolio data not available
+          </CardFooter>
+      )}
     </Card>
   )
 }
