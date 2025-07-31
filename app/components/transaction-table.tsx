@@ -51,7 +51,7 @@ export function TransactionTable() {
   const handleDelete = async (transactionId: string) => {
     try {
       await deleteTransaction(transactionId);
-      window.location.href = "/";
+      window.location.href = "/transactions";
     } catch (error) {
       console.error("Delete error:", error);
     }
@@ -128,7 +128,7 @@ export function TransactionTable() {
               </TableRow>
             </TableHeader>
           </Table>
-          <ScrollArea className="h-[calc(100vh)]">
+          <ScrollArea className="h-[calc(100vh-17rem)]">
             <Table>
               <TableBody>
                 {transactions.map((transaction) => (

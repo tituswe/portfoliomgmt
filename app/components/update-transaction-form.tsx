@@ -65,7 +65,7 @@ export function UpdateTransactionButton({
         transaction_date: new Date(values.transaction_date).toISOString(),
       };
       await updateTransaction(transactionUpdate);
-      window.location.href = "/";
+      window.location.href = "/transactions";
       reset();
     } catch (err) {
       console.error("Network or unexpected error:", err);
