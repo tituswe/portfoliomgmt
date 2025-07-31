@@ -55,12 +55,12 @@ export function PerformanceChart() {
     "30d": "past month",
     "90d": "past 3 months",
     "365d": "past year",
-    nd: "all time",
+    "5y": "past 5 years"
   };
 
   // Filter data based on selected time range
   const filteredData = React.useMemo(() => {
-    if (timeRange === "nd" || chartData.length === 0) return chartData;
+    if (timeRange === "5y" || chartData.length === 0) return chartData;
 
     const referenceDate = new Date(chartData[chartData.length - 1].date);
     let daysToSubtract = 90;
@@ -121,7 +121,7 @@ export function PerformanceChart() {
           <ToggleGroupItem value="30d">1M</ToggleGroupItem>
           <ToggleGroupItem value="90d">3M</ToggleGroupItem>
           <ToggleGroupItem value="365d">1Y</ToggleGroupItem>
-          <ToggleGroupItem value="nd">All</ToggleGroupItem>
+          <ToggleGroupItem value="5y">5Y</ToggleGroupItem>
         </ToggleGroup>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
@@ -173,7 +173,7 @@ export function PerformanceChart() {
                       })}
                     </p>
                     <p className="text-sm">
-                      Value: ${payload[0].value?.toFixed(2)}
+                      Value: ${(payload[0].value as number).toFixed(2)}
                     </p>
                   </div>
                 );
