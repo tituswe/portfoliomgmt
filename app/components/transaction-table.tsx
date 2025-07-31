@@ -72,8 +72,8 @@ export function TransactionTable() {
           }))
           .sort(
             (a, b) =>
-              new Date(a.transaction_date).getTime() -
-              new Date(b.transaction_date).getTime()
+              new Date(b.transaction_date).getTime() -
+              new Date(a.transaction_date).getTime()
           );
 
         setTransactions(formattedData);
@@ -104,7 +104,7 @@ export function TransactionTable() {
   }
 
   return (
-    <Card className="h-[calc(100vh-8rem)] flex flex-col">
+    <Card className="h-[calc(100vh-8rem)] flex flex-col pb-0">
       <CardHeader className="relative items-center">
         <CardTitle>Transactions</CardTitle>
         <CardDescription>
@@ -128,7 +128,7 @@ export function TransactionTable() {
               </TableRow>
             </TableHeader>
           </Table>
-          <ScrollArea className="h-[calc(100vh-12rem)]">
+          <ScrollArea className="h-[calc(100vh)]">
             <Table>
               <TableBody>
                 {transactions.map((transaction) => (

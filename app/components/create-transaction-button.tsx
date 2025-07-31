@@ -62,8 +62,9 @@ export function CreateTransactionButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="icon">
+        <Button variant="default" className="h-8">
           <FilePlus2 />
+          Add Transaction
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
