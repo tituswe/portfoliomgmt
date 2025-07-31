@@ -7,7 +7,7 @@ export type Transaction = {
   transaction_date: string;
 };
 
-export type Postition = {
+export type Position = {
   id: string;
   ticker: string;
   name: string;
