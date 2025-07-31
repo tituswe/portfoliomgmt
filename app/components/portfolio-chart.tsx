@@ -16,6 +16,7 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface HoldingData {
   ticker: string;
@@ -77,8 +78,7 @@ export function PortfolioChart() {
   const chartConfig = generateChartConfig(chartData);
   const totalValue = chartData.reduce((sum, entry) => sum + entry.value, 0);
 
-  if (loading)
-    return <div className="p-4">Loading portfolio distribution...</div>;
+  if (loading) return <Skeleton className="w-full h-full" />;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
   if (chartData.length === 0)
     return <div className="p-4">No holdings data available</div>;

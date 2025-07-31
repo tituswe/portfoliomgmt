@@ -15,6 +15,7 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PortfolioData {
   date: string;
@@ -91,7 +92,7 @@ export function PerformanceChart() {
   const isPositive = totalChange >= 0;
   const changeColor = isPositive ? "#0f9d58" : "#db4437"; // Green for gains, red for losses
 
-  if (loading) return <div className="p-4">Loading portfolio data...</div>;
+  if (loading) return <Skeleton className="w-full h-full" />;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
   if (chartData.length === 0)
     return <div className="p-4">No portfolio data available</div>;

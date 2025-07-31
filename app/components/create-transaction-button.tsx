@@ -52,7 +52,7 @@ export function CreateTransactionButton() {
     try {
       await createTransaction(values);
       reset();
-      window.location.href = "/";
+      window.location.href = "/transactions";
     } catch (err) {
       console.error("Network or unexpected error:", err);
       alert("An unexpected error occurred");
