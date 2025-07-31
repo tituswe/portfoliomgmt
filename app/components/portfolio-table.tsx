@@ -60,7 +60,7 @@ export function PortfolioTable() {
   }
 
   return (
-    <Card className="h-[calc(100vh-8rem)] flex flex-col">
+    <Card className="h-[calc(100vh-8rem)] flex flex-col pb-0">
       <CardHeader className="relative items-center">
         <CardTitle>Portfolio</CardTitle>
         <CardDescription>Your current portfolio holdings</CardDescription>
