@@ -29,6 +29,11 @@ interface CalculatedData extends ChartData {
   percentage: string;
 }
 
+interface TotalData {
+  value: number;
+  prev_value: number;
+}
+
 // const chartData = [
 //   { ticker: "aapl", value: 186, prev_value: 180},
 //   { ticker: "tsla", value: 205, prev_value: 230 },
@@ -37,10 +42,10 @@ interface CalculatedData extends ChartData {
 //   { ticker: "amzn", value: 209, prev_value: 198 },
 // ]
 
-const totalData = {
-  value: 3000, 
-  prev_value: 2800,
-}
+// const totalData = {
+//   value: 3000, 
+//   prev_value: 2800,
+// }
 
 const chartConfig = {
   value: {
@@ -68,6 +73,7 @@ const generateDataValues = (data: ChartData[]) : CalculatedData[] => {
 
 export function HoldingsChart() {
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [totalData, setTotalData] = useState<TotalData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const updatedChartData = generateDataValues(chartData); 
@@ -83,6 +89,13 @@ export function HoldingsChart() {
 
         const data = await response.json();
         setChartData(data);
+
+        const totalResponse = await fetch(
+          "http://127.0.0.1:8000/portfolio/monthchange"
+        );
+        if (!totalResponse.ok) throw new Error("Failed to fetch monthly change data");   
+        const data2 = await totalResponse.json();
+        setTotalData(data2);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
@@ -154,12 +167,24 @@ export function HoldingsChart() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        {totalData.value > totalData.prev_value ? 
-          <div className="flex items-center gap-2 leading-none font-medium"> Overall Portfolio up by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingUp className="text-green-600"/>  </div> 
-        : <div className="flex items-center gap-2 leading-none font-medium"> Overall Portfolio down by -{Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingDown className="text-red-600"/> </div> 
-        }
-      </CardFooter>
+      {totalData ? (
+        <CardFooter className="flex-col gap-2 text-sm">
+          {totalData.value > totalData.prev_value ? 
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Overall Portfolio up by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingUp className="text-green-600"/>  
+            </div> 
+          : 
+            <div className="flex items-center gap-2 leading-none font-medium">
+              Overall Portfolio down by {Math.abs((totalData.value - totalData.prev_value)/totalData.prev_value).toFixed(2)}% this past month <TrendingDown className="text-red-600"/> 
+            </div> 
+          
+          }
+        </CardFooter>)
+        : (
+          <CardFooter className="text-muted-foreground text-sm">
+            Monthly portfolio data not available
+          </CardFooter>
+      )}
     </Card>
   )
 }
