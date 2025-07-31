@@ -87,7 +87,7 @@ export function PortfolioTable() {
               </TableRow>
             </TableHeader>
           </Table>
-          <ScrollArea className="h-[calc(100vh-12rem)]">
+          <ScrollArea className="h-[calc(100vh-17rem)]">
             <Table>
               <TableBody>
                 {data.map((pos, index) => (

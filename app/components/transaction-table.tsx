@@ -128,7 +128,7 @@ export function TransactionTable() {
               </TableRow>
             </TableHeader>
           </Table>
-          <ScrollArea className="h-[calc(100vh)]">
+          <ScrollArea className="h-[calc(100vh-17rem)]">
             <Table>
               <TableBody>
                 {transactions.map((transaction) => (
