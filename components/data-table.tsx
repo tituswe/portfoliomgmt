@@ -101,6 +101,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Position, Transaction } from "@/lib/types";
+import { CreateTransactionButton } from "./create-transaction-button";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({ id });
@@ -207,7 +208,6 @@ const portfolioColumns: ColumnDef<Position>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
           <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Duplicate</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
         </DropdownMenuContent>
@@ -434,14 +434,7 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => alert("To implement")}
-          >
-            <IconPlus />
-            <span className="hidden lg:inline">Log Transaction</span>
-          </Button>
+          <CreateTransactionButton />
         </div>
       </div>
       <TabsContent

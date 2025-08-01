@@ -122,12 +122,12 @@ const chartData = [
 
 const chartConfig = {
   value: {
-    label: "Portfolio Value",
+    label: "Value",
     color: "var(--primary)",
   },
 };
 
-export function ChartAreaInteractive() {
+export function ChartPortfolioPerformance() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
 

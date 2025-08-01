@@ -34,7 +34,7 @@ import {
 import { MoreVertical, Trash2, Edit } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Transaction } from "@/lib/types";
-import { CreateTransactionButton } from "./create-transaction-button";
+import { CreateTransactionButton } from "../../components/create-transaction-button";
 import { UpdateTransactionButton } from "./update-transaction-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { deleteTransaction, getTransactions } from "@/lib/api";
