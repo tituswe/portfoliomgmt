@@ -37,7 +37,7 @@ export async function getPortfolioData() {
 }
 
 export async function getTransactionsData() {
-  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions`, {
+  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions-table`, {
     cache: "no-store",
   }).then((res) => res.json());
   return transactions;

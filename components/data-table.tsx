@@ -214,6 +214,11 @@ const transactionColumns: ColumnDef<Transaction>[] = [
     },
   },
   {
+    accessorKey: "buy_sell",
+    header: "Buy/Sell",
+    cell: ({ getValue }) => getValue() as string,
+  },
+  {
     id: "actions",
     header: "",
     cell: (c) => (
