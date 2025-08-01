@@ -39,7 +39,6 @@ interface UpdateTransactionButtonProps {
 export function UpdateTransactionButton({
   transaction,
 }: UpdateTransactionButtonProps) {
-  console.log("UpdateTransactionButton transaction:", transaction);
   const [open, setOpen] = useState(false);
 
   const {
@@ -53,7 +52,7 @@ export function UpdateTransactionButton({
       ...transaction,
       transaction_date: new Date(transaction.transaction_date)
         .toISOString()
-        .split("T")[0], // Format to YYYY-MM-DD
+        .split("T")[0],
     },
   });
 
@@ -61,12 +60,11 @@ export function UpdateTransactionButton({
     try {
       const transactionUpdate: Transaction = {
         ...values,
-        id: transaction.id, // Ensure the ID is included for the update
+        id: transaction.id,
         transaction_date: new Date(values.transaction_date).toISOString(),
       };
       await updateTransaction(transactionUpdate);
-      window.location.href = "/transactions";
-      reset();
+      window.location.href = "/";
     } catch (err) {
       console.error("Network or unexpected error:", err);
       alert("An unexpected error occurred");

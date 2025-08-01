@@ -51,8 +51,7 @@ export function CreateTransactionButton() {
 
     try {
       await createTransaction(values);
-      reset();
-      window.location.href = "/transactions";
+      window.location.href = "/";
     } catch (err) {
       console.error("Network or unexpected error:", err);
       alert("An unexpected error occurred");
@@ -64,7 +63,7 @@ export function CreateTransactionButton() {
       <DialogTrigger asChild>
         <Button variant="default" className="h-8">
           <FilePlus2 />
-          Add Transaction
+          Log Transaction
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
