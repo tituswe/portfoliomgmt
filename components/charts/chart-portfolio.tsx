@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
 import { Label, Legend, Pie, PieChart } from "recharts";
 
 import {
@@ -75,8 +74,8 @@ export function ChartPortfolio({
               data={coloredChartData}
               dataKey="value"
               nameKey="ticker"
-              innerRadius={60}
-              outerRadius={80}
+              innerRadius={70}
+              outerRadius={90}
               paddingAngle={1}
               stroke="var(--background)"
             >
@@ -95,7 +94,7 @@ export function ChartPortfolio({
                           y={viewBox.cy}
                           className="fill-foreground text-xl font-bold"
                         >
-                          ${totalValue.toFixed(2).toLocaleString()}
+                          ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

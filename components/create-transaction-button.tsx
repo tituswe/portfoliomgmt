@@ -61,7 +61,7 @@ export function CreateTransactionButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default" className="h-8">
+        <Button variant="outline" className="h-8">
           <FilePlus2 />
           Log Transaction
         </Button>
