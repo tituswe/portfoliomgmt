@@ -1,24 +1,39 @@
 import { apiUrl } from "./env";
-import { Postition, Transaction } from "./types";
+import { Position, Transaction } from "./types";
 
-export function getPortfolio(): Promise<Postition[]> {
-  return fetch(`${apiUrl}/portfolio`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch portfolio data");
-      }
-      return response.json();
-    });
+export async function getPortfolioPerformanceChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-linechart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
 }
 
-export function getTransactions(): Promise<Transaction[]> {
-  return fetch(`${apiUrl}/transactions`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
-      return response.json();
-    })
+export async function getPortfolioChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-piechart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
+export async function getHoldingsChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-barchart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
+export async function getPortfolioData() {
+  const posts: Position[] = await fetch(`${apiUrl}/portfolio`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return posts;
+}
+
+export async function getTransactionsData() {
+  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return transactions;
 }
 
 export function createTransaction(

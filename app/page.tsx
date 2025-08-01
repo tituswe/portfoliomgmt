@@ -8,43 +8,13 @@ import { ChartPortfolio } from "@/components/charts/chart-portfolio";
 import { ChartHoldings } from "@/components/charts/chart-holdings";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiUrl } from "@/lib/env";
-import { Position, Transaction } from "@/lib/types";
-
-async function getPortfolioPerformanceChartData() {
-  const chartData = await fetch(`${apiUrl}/charts/portfolio-linechart`, {
-    cache: "no-store",
-  }).then((res) => res.json());
-  return chartData;
-}
-
-async function getPortfolioChartData() {
-  const chartData = await fetch(`${apiUrl}/charts/portfolio-piechart`, {
-    cache: "no-store",
-  }).then((res) => res.json());
-  return chartData;
-}
-
-async function getHoldingsChartData() {
-  const chartData = await fetch(`${apiUrl}/charts/portfolio-barchart`, {
-    cache: "no-store",
-  }).then((res) => res.json());
-  return chartData;
-}
-
-async function getPortfolioData() {
-  const posts: Position[] = await fetch(`${apiUrl}/portfolio`, {
-    cache: "no-store",
-  }).then((res) => res.json());
-  return posts;
-}
-
-async function getTransactionsData() {
-  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions`, {
-    cache: "no-store",
-  }).then((res) => res.json());
-  return transactions;
-}
+import {
+  getHoldingsChartData,
+  getPortfolioChartData,
+  getPortfolioData,
+  getPortfolioPerformanceChartData,
+  getTransactionsData,
+} from "@/lib/api";
 
 export default async function Page() {
   const portfolioPerformanceChartData = getPortfolioPerformanceChartData();
