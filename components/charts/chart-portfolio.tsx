@@ -28,18 +28,32 @@ export function ChartPortfolio({
 }) {
   const chartData = React.use(chartPromise);
 
-  // TODO: Something is wrong with the coloring i cant figure it out
-  const chartConfig = chartData.reduce((config, item, index) => {
+  const blueColors = [
+    "var(--color-blue-100)",
+    "var(--color-blue-200)",
+    "var(--color-blue-300)",
+    "var(--color-blue-400)",
+    "var(--color-blue-500)",
+    "var(--color-blue-600)",
+  ];
+
+  const coloredChartData = chartData.map((item, index) => ({
+    ...item,
+    fill: blueColors[index % blueColors.length],
+  }));
+
+  const chartConfig = coloredChartData.reduce((config, item, index) => {
+    const colorIndex = index % blueColors.length;
     config[item.ticker] = {
       label: item.ticker,
-      color: `var(--chart-${index + 1})`,
+      color: blueColors[colorIndex],
     };
     return config;
   }, {} as ChartConfig);
 
   const totalValue = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.value, 0);
-  }, []);
+    return coloredChartData.reduce((acc, curr) => acc + curr.value, 0);
+  }, [coloredChartData]);
 
   return (
     <Card className="flex flex-col">
@@ -58,11 +72,13 @@ export function ChartPortfolio({
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={chartData}
+              data={coloredChartData}
               dataKey="value"
               nameKey="ticker"
               innerRadius={60}
-              strokeWidth={5}
+              outerRadius={80}
+              paddingAngle={1}
+              stroke="var(--background)"
             >
               <Label
                 content={({ viewBox }) => {
@@ -79,7 +95,7 @@ export function ChartPortfolio({
                           y={viewBox.cy}
                           className="fill-foreground text-xl font-bold"
                         >
-                          ${totalValue.toLocaleString()}
+                          ${totalValue.toFixed(2).toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
@@ -108,15 +124,14 @@ export function ChartPortfolio({
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm mt-auto">
         {(() => {
-          const leader = chartData.reduce((prev, curr) =>
+          const leader = coloredChartData.reduce((prev, curr) =>
             curr.value > prev.value ? curr : prev
           );
           const percentage = ((leader.value / totalValue) * 100).toFixed(1);
 
           return (
             <div className="flex items-center gap-2 leading-none font-medium">
-              {leader.ticker} leading portfolio by {percentage}%
-              <TrendingUp className="h-4 w-4" />
+              {leader.ticker} represents {percentage}% of your portfolio value
             </div>
           );
         })()}
