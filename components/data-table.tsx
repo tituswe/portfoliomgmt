@@ -71,6 +71,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Position, Transaction } from "@/lib/types";
 import { CreateTransactionButton } from "@/components/create-transaction-button";
+import { UpdateTransactionButton } from "@/components/update-transaction-form";
+import { DeleteTransactionButton } from "./delete-transaction-button";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({ id });
@@ -160,31 +162,6 @@ const portfolioColumns: ColumnDef<Position>[] = [
       );
     },
   },
-  {
-    id: "actions",
-    header: "",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
 ];
 
 const transactionColumns: ColumnDef<Transaction>[] = [
@@ -235,6 +212,31 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         day: "numeric",
       });
     },
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: (c) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            size="icon"
+          >
+            <IconDotsVertical />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-32">
+          <UpdateTransactionButton transaction={c.row.original} />
+          <DropdownMenuSeparator />
+          <DeleteTransactionButton transaction={c.row.original} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
 
