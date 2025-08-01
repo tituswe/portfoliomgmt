@@ -48,19 +48,25 @@ export function ChartPortfolioPerformance({
     }
   }, [isMobile]);
 
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date);
-    const referenceDate = new Date("2024-06-30");
-    let daysToSubtract = 90;
-    if (timeRange === "30d") {
+  
+  const filteredData = (() => {
+    if (timeRange === "5y" || chartData.length === 0) return chartData;
+
+    const referenceDate = new Date(chartData[chartData.length - 1].date);
+    let daysToSubtract = 365;
+
+    if (timeRange === "90d") {
+      daysToSubtract = 90;
+    } else if (timeRange === "30d") {
       daysToSubtract = 30;
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
-    const startDate = new Date(referenceDate);
-    startDate.setDate(startDate.getDate() - daysToSubtract);
-    return date >= startDate;
-  });
+
+    referenceDate.setDate(referenceDate.getDate() - daysToSubtract);
+
+    return chartData.filter((item) => new Date(item.date) >= referenceDate);
+  })();
 
   const isUp =
     filteredData.length > 1 &&
@@ -86,9 +92,11 @@ export function ChartPortfolioPerformance({
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-            <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+            <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
+            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
+            <ToggleGroupItem value="1y">Last 1 year</ToggleGroupItem>
+            <ToggleGroupItem value="5y">Last 5 years</ToggleGroupItem>
           </ToggleGroup>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
