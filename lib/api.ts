@@ -1,5 +1,12 @@
 import { apiUrl } from "./env";
-import { Position, Transaction } from "./types";
+import { PortfolioSummary, Position, Transaction } from "./types";
+
+export async function getPortfolioSummary() {
+  const summary: PortfolioSummary = await fetch(`${apiUrl}/summary`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return summary;
+}
 
 export async function getPortfolioPerformanceChartData() {
   const chartData = await fetch(`${apiUrl}/charts/portfolio-linechart`, {

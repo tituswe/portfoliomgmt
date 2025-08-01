@@ -1,3 +1,14 @@
+export type PortfolioSummary = {
+  total_value: number;
+  total_value_pct: number;
+  monthly_pnl: number;
+  monthly_pnl_pct: number;
+  all_time_returns: number;
+  all_time_returns_pct: number;
+  cash: number;
+  cash_pct: number;
+};
+
 export type Transaction = {
   id: string;
   ticker: string;

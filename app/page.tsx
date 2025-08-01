@@ -13,10 +13,12 @@ import {
   getPortfolioChartData,
   getPortfolioData,
   getPortfolioPerformanceChartData,
+  getPortfolioSummary,
   getTransactionsData,
 } from "@/lib/api";
 
 export default async function Page() {
+  const portfolioSummary = getPortfolioSummary();
   const portfolioPerformanceChartData = getPortfolioPerformanceChartData();
   const portfolioChartData = getPortfolioChartData();
   const holdingsChartData = getHoldingsChartData();
@@ -38,7 +40,18 @@ export default async function Page() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
+              <Suspense
+                fallback={
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 flex items-center justify-between gap-6 mx-6">
+                    <Skeleton className="h-[182px] flex-grow rounded-xl" />
+                    <Skeleton className="h-[182px] flex-grow rounded-xl" />
+                    <Skeleton className="h-[182px] flex-grow rounded-xl" />
+                    <Skeleton className="h-[182px] flex-grow rounded-xl" />
+                  </div>
+                }
+              >
+                <SectionCards data={portfolioSummary} />
+              </Suspense>
               <div className="px-4 lg:px-6">
                 <Suspense
                   fallback={<Skeleton className="h-[390px] rounded-xl" />}
