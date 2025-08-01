@@ -25,46 +25,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import React from "react";
 
 export const description = "A bar chart showing holdings' performance";
-
-const chartData = [
-  {
-    ticker: "AAPL",
-    value: 32000,
-    prev_value: 30000,
-    fixed_change: 2000,
-    percentage_change: 6.7,
-  },
-  {
-    ticker: "TSLA",
-    value: 24000,
-    prev_value: 26000,
-    fixed_change: -2000,
-    percentage_change: -7.7,
-  },
-  {
-    ticker: "GOOGL",
-    value: 18000,
-    prev_value: 17500,
-    fixed_change: 500,
-    percentage_change: 2.9,
-  },
-  {
-    ticker: "AMZN",
-    value: 15000,
-    prev_value: 14500,
-    fixed_change: 500,
-    percentage_change: 3.4,
-  },
-  {
-    ticker: "MSFT",
-    value: 11000,
-    prev_value: 12500,
-    fixed_change: -1500,
-    percentage_change: -12.0,
-  },
-];
 
 const chartConfig = {
   percentage_change: {
@@ -72,7 +35,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartHoldings() {
+export function ChartHoldings({
+  chartData: chartPromise,
+}: {
+  chartData: Promise<
+    {
+      ticker: string;
+      value: number;
+      prev_value: number;
+      fixed_change: number;
+      percentage_change: number;
+    }[]
+  >;
+}) {
+  const chartData = React.use(chartPromise);
+
   const totalPrevValue = chartData.reduce(
     (sum, item) => sum + item.prev_value,
     0

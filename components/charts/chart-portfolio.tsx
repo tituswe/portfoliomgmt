@@ -21,23 +21,22 @@ import {
 
 export const description = "A donut chart showing portfolio allocation";
 
-const chartData = [
-  { ticker: "AAPL", value: 32000, fill: "var(--chart-1)" },
-  { ticker: "TSLA", value: 24000, fill: "var(--chart-2)" },
-  { ticker: "GOOGL", value: 18000, fill: "var(--chart-3)" },
-  { ticker: "AMZN", value: 15000, fill: "var(--chart-4)" },
-  { ticker: "MSFT", value: 11000, fill: "var(--chart-5)" },
-];
+export function ChartPortfolio({
+  chartData: chartPromise,
+}: {
+  chartData: Promise<{ ticker: string; value: number; fill: string }[]>;
+}) {
+  const chartData = React.use(chartPromise);
 
-const chartConfig = chartData.reduce((config, item, index) => {
-  config[item.ticker] = {
-    label: item.ticker,
-    color: item.fill,
-  };
-  return config;
-}, {} as ChartConfig);
+  // TODO: Something is wrong with the coloring i cant figure it out
+  const chartConfig = chartData.reduce((config, item, index) => {
+    config[item.ticker] = {
+      label: item.ticker,
+      color: `var(--chart-${index + 1})`,
+    };
+    return config;
+  }, {} as ChartConfig);
 
-export function ChartPortfolio() {
   const totalValue = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.value, 0);
   }, []);

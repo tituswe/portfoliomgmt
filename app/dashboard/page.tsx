@@ -4,13 +4,54 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { mockPositions, mockTransactions } from "./data";
 import { ChartPortfolio } from "@/components/charts/chart-portfolio";
 import { ChartHoldings } from "@/components/charts/chart-holdings";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { apiUrl } from "@/lib/env";
+import { Position, Transaction } from "@/lib/types";
 
-export default function Page() {
-  const portfolioData = mockPositions;
-  const transactionData = mockTransactions;
+async function getPortfolioPerformanceChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-linechart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
+async function getPortfolioChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-piechart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
+async function getHoldingsChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-barchart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
+async function getPortfolioData() {
+  const posts: Position[] = await fetch(`${apiUrl}/portfolio`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return posts;
+}
+
+async function getTransactionsData() {
+  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return transactions;
+}
+
+export default async function Page() {
+  const portfolioPerformanceChartData = getPortfolioPerformanceChartData();
+  const portfolioChartData = getPortfolioChartData();
+  const holdingsChartData = getHoldingsChartData();
+  const portfolioData = getPortfolioData();
+  const transactionData = getTransactionsData();
 
   return (
     <SidebarProvider
@@ -29,16 +70,32 @@ export default function Page() {
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards />
               <div className="px-4 lg:px-6">
-                <ChartPortfolioPerformance />
+                <Suspense
+                  fallback={<Skeleton className="h-[390px] rounded-xl" />}
+                >
+                  <ChartPortfolioPerformance
+                    chartData={portfolioPerformanceChartData}
+                  />
+                </Suspense>
               </div>
-              <div className="px-4 lg:px-6 grid grid-cols-3 gap-6">
-                <ChartPortfolio />
-                <ChartHoldings />
+              <div className="px-4 lg:px-6 grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <Suspense
+                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                >
+                  <ChartPortfolio chartData={portfolioChartData} />
+                </Suspense>
+                <Suspense
+                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                >
+                  <ChartHoldings chartData={holdingsChartData} />
+                </Suspense>
               </div>
-              <DataTable
-                portfolioData={portfolioData}
-                transactionData={transactionData}
-              />
+              <Suspense fallback={<Skeleton className="h-120 mx-6" />}>
+                <DataTable
+                  portfolioData={portfolioData}
+                  transactionData={transactionData}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
