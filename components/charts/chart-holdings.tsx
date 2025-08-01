@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -96,10 +96,10 @@ export function ChartHoldings({
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
+      <CardFooter className="flex-col items-center gap-2 text-sm mt-auto">
         <div className="flex gap-2 leading-none font-medium">
           Overall {overallChangePct}% change in portfolio this last month
-          <TrendingUp className="h-4 w-4" />
+          {totalCurrentValue >= totalPrevValue ? <TrendingUp className="h-4 w-4" color="#16a34a"/> : <TrendingDown className="h-4 w-4" color="#dc2626"/>}
         </div>
         <div className="text-muted-foreground leading-none">
           Showing percentage change across top holdings
