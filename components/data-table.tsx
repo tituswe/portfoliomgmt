@@ -73,6 +73,7 @@ import { Position, Transaction } from "@/lib/types";
 import { CreateTransactionButton } from "@/components/create-transaction-button";
 import { UpdateTransactionButton } from "@/components/update-transaction-form";
 import { DeleteTransactionButton } from "./delete-transaction-button";
+import { Badge } from "./ui/badge";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({ id });
@@ -216,7 +217,17 @@ const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "buy_sell",
     header: "Buy/Sell",
-    cell: ({ getValue }) => getValue() as string,
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      return (
+        <Badge
+          variant={"secondary"}
+          className={value === "Buy" ? "text-green-600" : "text-red-600"}
+        >
+          {value}
+        </Badge>
+      );
+    },
   },
   {
     id: "actions",

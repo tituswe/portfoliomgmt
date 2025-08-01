@@ -92,9 +92,12 @@ export function ChartPortfolio({
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-xl font-bold"
+                          className="fill-foreground text-lg font-bold"
                         >
-                          ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {totalValue.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
