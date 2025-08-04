@@ -261,10 +261,10 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-4"
             size="icon"
           >
-            <IconDotsVertical />
+            <IconDotsVertical className="size-4" />
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -290,7 +290,7 @@ function DraggableRow({ row }: { row: Row<Position> }) {
       data-state={row.getIsSelected() && "selected"}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 h-12"
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -470,7 +470,7 @@ export function DataTable({
             <Table style={{ tableLayout: "fixed" }}>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {portfolioTable.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="h-12">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
@@ -613,7 +613,7 @@ export function DataTable({
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
               {transactionTable.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="h-12">
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -630,7 +630,7 @@ export function DataTable({
             <TableBody>
               {transactionTable.getRowModel().rows.length ? (
                 transactionTable.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="h-12">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
