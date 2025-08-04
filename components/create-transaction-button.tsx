@@ -22,8 +22,8 @@ import { createTransaction } from "@/lib/api";
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
   name: z.string().min(1, "Name is required"),
-  quantity: z.number().min(1, "Quantity must be at least 0"),
-  price: z.number().min(1, "Price must be at least 0"),
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  price: z.number().min(1, "Price must be at least 1"),
   transaction_date: z.string().min(1, "Date is required"),
 });
 
@@ -40,21 +40,21 @@ export function CreateTransactionButton() {
     defaultValues: {
       ticker: "",
       name: "",
-      quantity: undefined,
-      price: undefined,
-      transaction_date: "",
+      quantity: 1,
+      price: 150,
+      transaction_date: Date.now().toString().split("T")[0],
     },
   });
 
   async function onSubmit(values: FormValues) {
     console.log("Form submitted with values:", values);
+    values.quantity = 0;
 
     try {
       await createTransaction(values);
       window.location.href = "/";
     } catch (err) {
-      console.error("Network or unexpected error:", err);
-      alert("An unexpected error occurred");
+      alert(err instanceof Error ? err.message : "Unknown error");
     }
   }
 

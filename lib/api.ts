@@ -43,22 +43,36 @@ export async function getTransactionsData() {
   return transactions;
 }
 
-export function createTransaction(
+export async function createTransaction(
   transaction: Omit<Transaction, "id" | "transaction_date">
 ): Promise<Transaction> {
-  return fetch(`${apiUrl}/transaction`, {
+  const res = await fetch(`${apiUrl}/transaction`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(transaction),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to create transaction");
-    }
-    return response.json();
   });
+
+  if (!res.ok) {
+    let msg = `${res.status} ${res.statusText}`;
+    try {
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) {
+        const err = await res.json();
+        if (typeof err?.detail === "string") msg = err.detail;
+        else if (Array.isArray(err?.detail))
+          msg = err.detail.map((e: any) => e.msg || JSON.stringify(e)).join("; ");
+        else if (err?.message) msg = err.message;
+      } else {
+        const text = await res.text();
+        if (text) msg = text;
+      }
+    } catch { }
+    throw new Error(msg);
+  }
+
+  return res.json();
 }
+
 
 export function updateTransaction(
   transaction: Transaction
