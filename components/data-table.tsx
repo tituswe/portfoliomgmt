@@ -484,21 +484,34 @@ export function DataTable({
                             <div
                               className={`flex items-center ${
                                 header.column.getCanSort()
-                                  ? "cursor-pointer select-none"
+                                  ? "cursor-pointer select-none group"
                                   : ""
                               }`}
-                              onClick={header.column.getToggleSortingHandler()}
+                              onClick={() => {
+                                if (header.column.getCanSort()) {
+                                  const currentSort =
+                                    header.column.getIsSorted();
+                                  header.column.toggleSorting(
+                                    currentSort === "asc"
+                                  );
+                                }
+                              }}
                             >
                               {flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
-                              {{
-                                asc: <IconChevronUp className="ml-2 h-4 w-4" />,
-                                desc: (
+                              {header.column.getIsSorted() ? (
+                                header.column.getIsSorted() === "asc" ? (
+                                  <IconChevronUp className="ml-2 h-4 w-4" />
+                                ) : (
                                   <IconChevronDown className="ml-2 h-4 w-4" />
-                                ),
-                              }[header.column.getIsSorted() as string] ?? null}
+                                )
+                              ) : (
+                                header.column.getCanSort() && (
+                                  <IconChevronUp className="ml-2 h-4 w-4 opacity-0 transition-opacity group-hover:opacity-50" />
+                                )
+                              )}
                             </div>
                           )}
                         </TableHead>
