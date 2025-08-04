@@ -380,13 +380,10 @@ export function DataTable({
     columns: transactionColumns,
     state: {
       pagination: transactionPagination,
-      sorting,
     },
-    onSortingChange: setSorting,
     onPaginationChange: setTransactionPagination,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   function handleDragEnd(event: DragEndEvent) {
@@ -628,7 +625,7 @@ export function DataTable({
               {transactionTable.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="h-12">
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
