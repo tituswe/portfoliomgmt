@@ -49,7 +49,7 @@ export function ChartHoldings({
   >;
 }) {
   const chartData = React.use(chartPromise);
-
+  console.log("Chart Data:", chartData);
   const totalPrevValue = chartData.reduce(
     (sum, item) => sum + item.prev_value,
     0
@@ -99,7 +99,11 @@ export function ChartHoldings({
       <CardFooter className="flex-col items-center gap-2 text-sm mt-auto">
         <div className="flex gap-2 leading-none font-medium">
           Overall {overallChangePct}% change in portfolio this last month
-          {totalCurrentValue >= totalPrevValue ? <TrendingUp className="h-4 w-4" color="#16a34a"/> : <TrendingDown className="h-4 w-4" color="#dc2626"/>}
+          {totalCurrentValue >= totalPrevValue ? (
+            <TrendingUp className="h-4 w-4" color="#16a34a" />
+          ) : (
+            <TrendingDown className="h-4 w-4" color="#dc2626" />
+          )}
         </div>
         <div className="text-muted-foreground leading-none">
           Showing percentage change across top holdings
