@@ -49,27 +49,21 @@ export function ChartHoldings({
   >;
 }) {
   const chartData = React.use(chartPromise);
-  console.log("Chart Data:", chartData);
-  const totalPrevValue = chartData.reduce(
-    (sum, item) => sum + item.prev_value,
-    0
-  );
-  const totalCurrentValue = chartData.reduce(
-    (sum, item) => sum + item.value,
-    0
-  );
-  const overallChangePct = (
-    ((totalCurrentValue - totalPrevValue) / totalPrevValue) *
-    100
-  ).toFixed(1);
+  const { percentage_change: largestPercentageChange, ticker: largestTicker } =
+    chartData.reduce(
+      (max, item) => {
+        const currentMagnitude = Math.abs(item.percentage_change);
+        const maxMagnitude = Math.abs(max.percentage_change);
+        return currentMagnitude > maxMagnitude ? item : max;
+      },
+      { percentage_change: 0, ticker: "" }
+    );
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Top 5 Holdings' Performance</CardTitle>
-        <CardDescription>
-          Showing percentage change from the last month
-        </CardDescription>
+        <CardDescription>Percentage change in the last month</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -98,8 +92,10 @@ export function ChartHoldings({
       </CardContent>
       <CardFooter className="flex-col items-center gap-2 text-sm mt-auto">
         <div className="flex gap-2 leading-none font-medium">
-          Overall {overallChangePct}% change in portfolio this last month
-          {totalCurrentValue >= totalPrevValue ? (
+          {`${largestTicker} had a ${
+            largestPercentageChange >= 0 ? "+" : ""
+          }${largestPercentageChange}% change last month`}
+          {largestPercentageChange >= 0 ? (
             <TrendingUp className="h-4 w-4" color="#16a34a" />
           ) : (
             <TrendingDown className="h-4 w-4" color="#dc2626" />
