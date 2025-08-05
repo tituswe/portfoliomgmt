@@ -37,42 +37,42 @@ export async function getPortfolioData() {
 }
 
 export async function getTransactionsData() {
-  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions-table`, {
-    cache: "no-store",
-  }).then((res) => res.json());
+  const transactions: Transaction[] = await fetch(
+    `${apiUrl}/transactions-table`,
+    {
+      cache: "no-store",
+    }
+  ).then((res) => res.json());
   return transactions;
 }
 
 export async function createTransaction(
-  transaction: Omit<Transaction, "id" | "transaction_date">
+  transaction: Omit<Transaction, "id" | "name" | "transaction_date">,
+  isBuy: boolean
 ): Promise<Transaction> {
+  const transactionToCreate = {
+    ...transaction,
+    quantity: isBuy
+      ? Math.abs(transaction.quantity)
+      : -Math.abs(transaction.quantity),
+  };
   const res = await fetch(`${apiUrl}/transaction`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(transaction),
+    body: JSON.stringify(transactionToCreate),
   });
 
   if (!res.ok) {
-    let msg = `${res.status} ${res.statusText}`;
+    let msg;
     try {
-      const ct = res.headers.get("content-type") || "";
-      if (ct.includes("application/json")) {
-        const err = await res.json();
-        if (typeof err?.detail === "string") msg = err.detail;
-        else if (Array.isArray(err?.detail))
-          msg = err.detail.map((e: any) => e.msg || JSON.stringify(e)).join("; ");
-        else if (err?.message) msg = err.message;
-      } else {
-        const text = await res.text();
-        if (text) msg = text;
-      }
-    } catch { }
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
     throw new Error(msg);
   }
 
   return res.json();
 }
-
 
 export function updateTransaction(
   transaction: Transaction
