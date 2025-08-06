@@ -74,21 +74,32 @@ export async function createTransaction(
   return res.json();
 }
 
-export function updateTransaction(
-  transaction: Transaction
+export async function updateTransaction(
+  transaction: Transaction,
+  isBuy: boolean
 ): Promise<Transaction> {
-  return fetch(`${apiUrl}/transaction/${transaction.id}`, {
+  const transactionToUpdate = {
+    ...transaction,
+    quantity: isBuy
+      ? Math.abs(transaction.quantity)
+      : -Math.abs(transaction.quantity),
+  };
+  const res = await fetch(`${apiUrl}/transaction/${transaction.id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(transaction),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to update transaction");
-    }
-    return response.json();
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(transactionToUpdate),
   });
+
+  if (!res.ok) {
+    let msg;
+    try {
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  return res.json();
 }
 
 export function deleteTransaction(transactionId: string): Promise<void> {

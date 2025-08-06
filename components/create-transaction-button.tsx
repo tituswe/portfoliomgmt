@@ -36,6 +36,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function CreateTransactionButton() {
   const [isBuy, setIsBuy] = useState(true);
+
   const {
     register,
     handleSubmit,
