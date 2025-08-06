@@ -14,14 +14,17 @@ import {
   getPortfolioChartData,
   getPortfolioData,
   getPortfolioPerformanceChartData,
+  getPortfolioPnlChartData,
   getPortfolioSummary,
   getTransactionsData,
   getWatchlistData,
 } from "@/lib/api";
+import { ChartPnl } from "@/components/charts/chart-pnl";
 
 export default async function Page() {
   const portfolioSummary = getPortfolioSummary();
   const portfolioPerformanceChartData = getPortfolioPerformanceChartData();
+  const portfolioPnlChartData = getPortfolioPnlChartData();
   const portfolioChartData = getPortfolioChartData();
   const holdingsChartData = getHoldingsChartData();
   const portfolioData = getPortfolioData();
@@ -85,6 +88,15 @@ export default async function Page() {
                 <DataTable
                   portfolioData={portfolioData}
                   transactionData={transactionData}
+                />
+              </Suspense>
+            </div>
+            <div className="px-4 lg:px-6">
+              <Suspense
+                fallback={<Skeleton className="h-[390px] rounded-xl" />}
+              >
+                <ChartPnl
+                  chartData={portfolioPnlChartData}
                 />
               </Suspense>
             </div>

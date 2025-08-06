@@ -18,6 +18,13 @@ export async function getPortfolioPerformanceChartData() {
   return chartData;
 }
 
+export async function getPortfolioPnlChartData() {
+  const chartData = await fetch(`${apiUrl}/charts/portfolio-pnlchart`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+  return chartData;
+}
+
 export async function getPortfolioChartData() {
   const chartData = await fetch(`${apiUrl}/charts/portfolio-piechart`, {
     cache: "force-cache",
