@@ -16,45 +16,46 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilePlus2, Plus } from "lucide-react";
+import { FilePlus2 } from "lucide-react";
 import { createTransaction } from "@/lib/api";
+import { toast } from "sonner";
+import { Switch } from "./ui/switch";
+import { Badge } from "./ui/badge";
+import { useState } from "react";
 
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
-  name: z.string().min(1, "Name is required"),
-  quantity: z.number().min(1, "Quantity must be at least 0"),
-  price: z.number().min(1, "Price must be at least 0"),
+  quantity: z
+    .number()
+    .refine((val) => val !== 0, { message: "Quantity cannot be 0" }),
+  price: z.number().min(0, "Price must be at least $0.00"),
   transaction_date: z.string().min(1, "Date is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export function CreateTransactionButton() {
+  const [isBuy, setIsBuy] = useState(true);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     reset,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ticker: "",
-      name: "",
-      quantity: undefined,
-      price: undefined,
-      transaction_date: "",
+      transaction_date: new Date(Date.now()).toISOString().split("T")[0],
     },
   });
 
   async function onSubmit(values: FormValues) {
-    console.log("Form submitted with values:", values);
-
     try {
-      await createTransaction(values);
+      await createTransaction(values, isBuy);
       window.location.href = "/";
     } catch (err) {
-      console.error("Network or unexpected error:", err);
-      alert("An unexpected error occurred");
+      toast(err instanceof Error ? err.message : "Unknown error");
     }
   }
 
@@ -77,43 +78,78 @@ export function CreateTransactionButton() {
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="ticker">Ticker</Label>
-            <Input id="ticker" placeholder="AAPL" {...register("ticker")} />
+            <Input
+              id="ticker"
+              placeholder="AAPL"
+              {...register("ticker")}
+              onInput={(e) => {
+                const input = e.target as HTMLInputElement;
+                input.value = input.value.toUpperCase();
+              }}
+            />
             {errors.ticker && (
               <p className="text-sm text-red-500">{errors.ticker.message}</p>
             )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Apple Inc." {...register("name")} />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
             <Label htmlFor="quantity">Quantity</Label>
-            <Input
-              id="quantity"
-              type="number"
-              step="any"
-              placeholder="0"
-              {...register("quantity", { valueAsNumber: true })}
-            />
-            {errors.quantity && (
-              <p className="text-sm text-red-500">{errors.quantity.message}</p>
-            )}
+            <div className="flex items-center gap-2">
+              <Input
+                id="quantity"
+                type="number"
+                step="any"
+                min="0"
+                placeholder="0"
+                {...register("quantity", { valueAsNumber: true })}
+              />
+              {errors.quantity && (
+                <p className="text-sm text-red-500">
+                  {errors.quantity.message}
+                </p>
+              )}
+              <Badge
+                variant={"secondary"}
+                className={isBuy ? "text-green-600" : "text-red-600"}
+              >
+                {isBuy ? "Buy" : "Sell"}
+              </Badge>
+              <Switch
+                id="buy-sell"
+                checked={isBuy}
+                onCheckedChange={setIsBuy}
+              />
+            </div>
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              type="number"
-              step="any"
-              placeholder="$150.00"
-              {...register("price", { valueAsNumber: true })}
-            />
+            <div className="relative flex items-center">
+              <span className="absolute left-3 text-muted-foreground text-sm">
+                $
+              </span>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="0.00"
+                className="pl-5"
+                {...register("price", {
+                  valueAsNumber: true,
+                  onBlur: (e) => {
+                    const n = parseFloat(e.target.value);
+                    if (!Number.isNaN(n)) {
+                      setValue("price", Number(n.toFixed(2)), {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                      e.target.value = n.toFixed(2);
+                    }
+                  },
+                })}
+              />
+            </div>
             {errors.price && (
               <p className="text-sm text-red-500">{errors.price.message}</p>
             )}

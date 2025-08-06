@@ -60,7 +60,7 @@ export function ChartHoldings({
     );
 
   return (
-    <Card>
+    <Card className="h-[480px]">
       <CardHeader>
         <CardTitle>Top 5 Holdings' Performance</CardTitle>
         <CardDescription>Percentage change in the last month</CardDescription>
@@ -80,7 +80,7 @@ export function ChartHoldings({
             <Bar dataKey="percentage_change">
               <LabelList
                 dataKey="percentage_change"
-                position="top"
+                position="bottom"
                 formatter={(val: number) => `${val}%`}
               />
               {chartData.map((item) => (

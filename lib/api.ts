@@ -37,52 +37,84 @@ export async function getPortfolioData() {
 }
 
 export async function getTransactionsData() {
-  const transactions: Transaction[] = await fetch(`${apiUrl}/transactions-table`, {
-    cache: "no-store",
-  }).then((res) => res.json());
+  const transactions: Transaction[] = await fetch(
+    `${apiUrl}/transactions-table`,
+    {
+      cache: "no-store",
+    }
+  ).then((res) => res.json());
   return transactions;
 }
 
-export function createTransaction(
-  transaction: Omit<Transaction, "id" | "transaction_date">
+export async function createTransaction(
+  transaction: Omit<Transaction, "id" | "name" | "transaction_date">,
+  isBuy: boolean
 ): Promise<Transaction> {
-  return fetch(`${apiUrl}/transaction`, {
+  const transactionToCreate = {
+    ...transaction,
+    quantity: isBuy
+      ? Math.abs(transaction.quantity)
+      : -Math.abs(transaction.quantity),
+  };
+  const res = await fetch(`${apiUrl}/transaction`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(transaction),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to create transaction");
-    }
-    return response.json();
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(transactionToCreate),
   });
+
+  if (!res.ok) {
+    let msg;
+    try {
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  return res.json();
 }
 
-export function updateTransaction(
-  transaction: Transaction
+export async function updateTransaction(
+  transaction: Transaction,
+  isBuy: boolean
 ): Promise<Transaction> {
-  return fetch(`${apiUrl}/transaction/${transaction.id}`, {
+  const transactionToUpdate = {
+    ...transaction,
+    quantity: isBuy
+      ? Math.abs(transaction.quantity)
+      : -Math.abs(transaction.quantity),
+  };
+  const res = await fetch(`${apiUrl}/transaction/${transaction.id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(transaction),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to update transaction");
-    }
-    return response.json();
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(transactionToUpdate),
   });
+
+  if (!res.ok) {
+    let msg;
+    try {
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  return res.json();
 }
 
-export function deleteTransaction(transactionId: string): Promise<void> {
-  return fetch(`${apiUrl}/transaction/${transactionId}`, {
+export async function deleteTransaction(transactionId: string): Promise<void> {
+  const res = await fetch(`${apiUrl}/transaction/${transactionId}`, {
     method: "DELETE",
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to delete transaction");
-    }
   });
+
+  if (!res.ok) {
+    let msg;
+    try {
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  return res.json();
 }

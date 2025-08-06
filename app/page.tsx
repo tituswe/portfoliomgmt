@@ -64,17 +64,17 @@ export default async function Page() {
               </div>
               <div className="px-4 lg:px-6 grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 <Suspense
-                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                  fallback={<Skeleton className="h-[480px] rounded-xl" />}
                 >
                   <ChartPortfolio chartData={portfolioChartData} />
                 </Suspense>
                 <Suspense
-                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                  fallback={<Skeleton className="h-[480x] rounded-xl" />}
                 >
                   <ChartHoldings chartData={holdingsChartData} />
                 </Suspense>
                 <Suspense
-                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                  fallback={<Skeleton className="h-[480px] rounded-xl" />}
                 >
                   <Watchlist />
                 </Suspense>

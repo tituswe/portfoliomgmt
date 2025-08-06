@@ -55,7 +55,7 @@ export function ChartPortfolio({
   }, [coloredChartData]);
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-[480px]">
       <CardHeader className="items-center pb-0">
         <CardTitle>Portfolio Allocation</CardTitle>
         <CardDescription>Based on current market value</CardDescription>

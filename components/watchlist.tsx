@@ -20,7 +20,7 @@ export const description = "Watchlist";
 
 export function Watchlist() {
   return (
-    <Card>
+    <Card className="h-[480px]">
       <CardHeader>
         <CardTitle>Watchlist</CardTitle>
         <CardDescription>Your tracked assets will appear here</CardDescription>

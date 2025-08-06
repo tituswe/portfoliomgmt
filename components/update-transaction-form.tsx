@@ -21,6 +21,9 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Transaction } from "@/lib/types";
 import { updateTransaction } from "@/lib/api";
+import { Badge } from "./ui/badge";
+import { Switch } from "./ui/switch";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   ticker: z.string().min(1, "Ticker is required"),
@@ -40,6 +43,7 @@ export function UpdateTransactionButton({
   transaction,
 }: UpdateTransactionButtonProps) {
   const [open, setOpen] = useState(false);
+  const [isBuy, setIsBuy] = useState(transaction.quantity >= 0);
 
   const {
     register,
@@ -50,6 +54,7 @@ export function UpdateTransactionButton({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...transaction,
+      quantity: Math.abs(transaction.quantity),
       transaction_date: new Date(transaction.transaction_date)
         .toISOString()
         .split("T")[0],
@@ -63,11 +68,10 @@ export function UpdateTransactionButton({
         id: transaction.id,
         transaction_date: new Date(values.transaction_date).toISOString(),
       };
-      await updateTransaction(transactionUpdate);
+      await updateTransaction(transactionUpdate, isBuy);
       window.location.href = "/";
     } catch (err) {
-      console.error("Network or unexpected error:", err);
-      alert("An unexpected error occurred");
+      toast(err instanceof Error ? err.message : "Unknown error");
     }
   }
 
@@ -96,34 +100,48 @@ export function UpdateTransactionButton({
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="ticker">Ticker</Label>
-              <Input id="ticker" placeholder="AAPL" {...register("ticker")} />
+              <Input
+                id="ticker"
+                placeholder="AAPL"
+                onInput={(e) => {
+                  const input = e.target as HTMLInputElement;
+                  input.value = input.value.toUpperCase();
+                }}
+                {...register("ticker")}
+              />
               {errors.ticker && (
                 <p className="text-sm text-red-500">{errors.ticker.message}</p>
               )}
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Apple Inc." {...register("name")} />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div className="grid gap-2">
               <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                step="any"
-                placeholder="0"
-                {...register("quantity", { valueAsNumber: true })}
-              />
-              {errors.quantity && (
-                <p className="text-sm text-red-500">
-                  {errors.quantity.message}
-                </p>
-              )}
+              <div className="flex items-center gap-2">
+                <Input
+                  id="quantity"
+                  type="number"
+                  step="any"
+                  min="0"
+                  placeholder="0"
+                  {...register("quantity", { valueAsNumber: true })}
+                />
+                {errors.quantity && (
+                  <p className="text-sm text-red-500">
+                    {errors.quantity.message}
+                  </p>
+                )}
+                <Badge
+                  variant={"secondary"}
+                  className={isBuy ? "text-green-600" : "text-red-600"}
+                >
+                  {isBuy ? "Buy" : "Sell"}
+                </Badge>
+                <Switch
+                  id="buy-sell"
+                  checked={isBuy}
+                  onCheckedChange={setIsBuy}
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">
