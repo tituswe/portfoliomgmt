@@ -28,4 +28,10 @@ export type Position = {
   price_delta: number;
   pct_delta: number;
   pnl: number;
-}
+};
+
+export type PriceData = {
+  currentPrice: number;
+  previousClose: number;
+  percentageChange: number;
+};

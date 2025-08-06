@@ -1,5 +1,5 @@
 import { apiUrl } from "./env";
-import { PortfolioSummary, Position, Transaction } from "./types";
+import { PortfolioSummary, Position, Transaction, PriceData } from "./types";
 
 export async function getPortfolioSummary() {
   const summary: PortfolioSummary = await fetch(`${apiUrl}/summary`, {
@@ -117,4 +117,87 @@ export async function deleteTransaction(transactionId: string): Promise<void> {
   }
 
   return res.json();
+}
+
+export async function fetchLivePrices(
+  tickers: string[]
+): Promise<Record<string, PriceData>> {
+  if (tickers.length === 0) return {};
+
+  try {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 2);
+
+    const todayStr = today.toISOString().split("T")[0];
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+    const [currentResponse, previousResponse] = await Promise.all([
+      fetch(`${apiUrl}/prices/live`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tickers: tickers,
+          interval: "1d",
+          target_date: todayStr,
+        }),
+      }),
+      fetch(`${apiUrl}/prices/live`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tickers: tickers,
+          interval: "1d",
+          target_date: yesterdayStr,
+        }),
+      }),
+    ]);
+
+    if (!currentResponse.ok || !previousResponse.ok) {
+      throw new Error("Failed to fetch prices");
+    }
+
+    const currentData = await currentResponse.json();
+    const previousData = await previousResponse.json();
+
+    const currentPrices = currentData.reduce(
+      (acc: Record<string, number>, item: any) => {
+        if (item.close) acc[item.ticker] = item.close;
+        return acc;
+      },
+      {}
+    );
+
+    const previousPrices = previousData.reduce(
+      (acc: Record<string, number>, item: any) => {
+        if (item.close) acc[item.ticker] = item.close;
+        return acc;
+      },
+      {}
+    );
+
+    return tickers.reduce((acc: Record<string, PriceData>, ticker) => {
+      const current = currentPrices[ticker];
+      const previous = previousPrices[ticker];
+
+      if (current && previous) {
+        acc[ticker] = {
+          currentPrice: current,
+          previousClose: previous,
+          percentageChange: ((current - previous) / previous) * 100,
+        };
+      } else if (current) {
+        acc[ticker] = {
+          currentPrice: current,
+          previousClose: current,
+          percentageChange: 0,
+        };
+      }
+
+      return acc;
+    }, {});
+  } catch (error) {
+    console.error("Error fetching prices:", error);
+    return {};
+  }
 }
