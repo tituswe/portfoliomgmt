@@ -102,12 +102,19 @@ export async function updateTransaction(
   return res.json();
 }
 
-export function deleteTransaction(transactionId: string): Promise<void> {
-  return fetch(`${apiUrl}/transaction/${transactionId}`, {
+export async function deleteTransaction(transactionId: string): Promise<void> {
+  const res = await fetch(`${apiUrl}/transaction/${transactionId}`, {
     method: "DELETE",
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Failed to delete transaction");
-    }
   });
+
+  if (!res.ok) {
+    let msg;
+    try {
+      const err = await res.json();
+      msg = err.detail;
+    } catch {}
+    throw new Error(msg);
+  }
+
+  return res.json();
 }

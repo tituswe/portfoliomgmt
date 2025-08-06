@@ -14,6 +14,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Transaction } from "@/lib/types";
 import { deleteTransaction } from "@/lib/api";
+import { toast } from "sonner";
 
 export function DeleteTransactionButton({
   transaction,
@@ -26,8 +27,8 @@ export function DeleteTransactionButton({
     try {
       await deleteTransaction(transactionId);
       window.location.href = "/";
-    } catch (error) {
-      console.error("Delete error:", error);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Unknown error");
     }
   };
 
