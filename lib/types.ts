@@ -7,6 +7,8 @@ export type PortfolioSummary = {
   all_time_returns_pct: number;
   cash: number;
   cash_pct: number;
+  invested_val: number;
+  invested_val_pct: number;
 };
 
 export type Transaction = {

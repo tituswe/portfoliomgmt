@@ -23,6 +23,8 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
     all_time_returns_pct,
     cash,
     cash_pct,
+    invested_val,
+    invested_val_pct,
   } = use(data);
 
   return (
@@ -63,6 +65,46 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
           </div>
           <div className="text-muted-foreground">
             Total value across all current holdings
+          </div>
+        </CardFooter>
+      </Card>
+
+      <Card className="@container/card">
+        <CardHeader>
+          <CardDescription>Total Invested Value</CardDescription>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            {invested_val.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+          </CardTitle>
+          <CardAction>
+            <Badge variant="outline">
+              {invested_val_pct > 0 ? (
+                <>
+                  <IconTrendingUp />
+                  {invested_val_pct.toFixed(1)}%
+                </>
+              ) : (
+                <>
+                  <IconTrendingDown />
+                  {invested_val_pct.toFixed(1)}%
+                </>
+              )}
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Investment portfolio {invested_val_pct > 0 ? "increased" : "decreased"}{" "} this month
+            {invested_val_pct > 0 ? (
+              <IconTrendingUp className="size-4" />
+            ) : (
+              <IconTrendingDown className="size-4" />
+            )}
+          </div>
+          <div className="text-muted-foreground">
+            Total value invested this month
           </div>
         </CardFooter>
       </Card>
@@ -147,45 +189,6 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
         </CardFooter>
       </Card>
 
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Cash Position</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {cash.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })}
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              {cash_pct > 0 ? (
-                <>
-                  <IconTrendingUp />
-                  {cash_pct.toFixed(1)}%
-                </>
-              ) : (
-                <>
-                  <IconTrendingDown />
-                  {cash_pct.toFixed(1)}%
-                </>
-              )}
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Liquidity {cash_pct > 0 ? "improved" : "degraded"}{" "}
-            {cash_pct > 0 ? (
-              <IconTrendingUp className="size-4" />
-            ) : (
-              <IconTrendingDown className="size-4" />
-            )}
-          </div>
-          <div className="text-muted-foreground">
-            Percentage of uninvested capital (Future Feature)
-          </div>
-        </CardFooter>
-      </Card>
     </div>
   );
 }
