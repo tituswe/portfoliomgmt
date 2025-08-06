@@ -22,8 +22,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { fetchLivePrices } from "@/lib/api";
 import { PriceData } from "@/lib/types";
@@ -163,11 +161,11 @@ export function Watchlist() {
                       <TableCell>
                         {prices[item.ticker]?.currentPrice
                           ? `$${prices[item.ticker].currentPrice.toFixed(2)}`
-                          : "--"}
+                          : ""}
                       </TableCell>
                       <TableCell
                         className={`${
-                          prices[item.ticker]?.percentageChange > 0
+                          prices[item.ticker]?.percentageChange >= 0
                             ? "text-green-500"
                             : "text-red-500"
                         }`}
@@ -180,7 +178,7 @@ export function Watchlist() {
                             }${prices[item.ticker].percentageChange.toFixed(
                               2
                             )}%`
-                          : "--"}
+                          : ""}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
