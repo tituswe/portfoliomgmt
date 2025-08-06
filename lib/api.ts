@@ -138,7 +138,7 @@ export async function fetchLivePrices(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tickers: tickers,
-          interval: "1d",
+          interval: "5m",
           target_date: todayStr,
         }),
       }),
