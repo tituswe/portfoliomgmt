@@ -74,6 +74,7 @@ import { CreateTransactionButton } from "@/components/create-transaction-button"
 import { UpdateTransactionButton } from "@/components/update-transaction-form";
 import { DeleteTransactionButton } from "./delete-transaction-button";
 import { Badge } from "./ui/badge";
+import { IconChevronUp, IconChevronDown } from "@tabler/icons-react";
 
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({ id });
@@ -98,6 +99,7 @@ const portfolioColumns: ColumnDef<Position>[] = [
     cell: ({ row }) => <DragHandle id={row.original.id} />,
     enableSorting: false,
     enableHiding: false,
+    size: 25,
   },
   {
     accessorKey: "ticker",
@@ -105,25 +107,35 @@ const portfolioColumns: ColumnDef<Position>[] = [
     cell: ({ row }) => (
       <span className="font-semibold">{row.original.ticker}</span>
     ),
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "name",
     header: "Stock Name",
+    enableSorting: true,
+    size: 200,
   },
   {
     accessorKey: "quantity",
     header: "Quantity",
     cell: ({ row }) => row.original.quantity.toLocaleString(),
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "avg_price",
     header: "Avg. Price",
     cell: ({ row }) => `$${row.original.avg_price.toFixed(2)}`,
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "live_price",
     header: "Live Price",
     cell: ({ row }) => `$${row.original.live_price.toFixed(2)}`,
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "price_delta",
@@ -137,6 +149,8 @@ const portfolioColumns: ColumnDef<Position>[] = [
         </span>
       );
     },
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "pct_delta",
@@ -150,6 +164,8 @@ const portfolioColumns: ColumnDef<Position>[] = [
         </span>
       );
     },
+    enableSorting: true,
+    size: 100,
   },
   {
     accessorKey: "pnl",
@@ -162,6 +178,8 @@ const portfolioColumns: ColumnDef<Position>[] = [
         </span>
       );
     },
+    enableSorting: true,
+    size: 100,
   },
 ];
 
@@ -179,11 +197,13 @@ const transactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ getValue }) => (
       <span className="font-medium">{getValue() as string}</span>
     ),
+    enableSorting: false,
   },
   {
     accessorKey: "name",
     header: "Stock Name",
     cell: ({ getValue }) => getValue() as string,
+    enableSorting: false,
   },
   {
     accessorKey: "quantity",
@@ -192,6 +212,7 @@ const transactionColumns: ColumnDef<Transaction>[] = [
       const val = Number(getValue());
       return val > 0 ? `+${val}` : `${val}`;
     },
+    enableSorting: false,
   },
   {
     accessorKey: "price",
@@ -201,6 +222,7 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}`,
+    enableSorting: false,
   },
   {
     accessorKey: "transaction_date",
@@ -213,6 +235,7 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         day: "numeric",
       });
     },
+    enableSorting: false,
   },
   {
     accessorKey: "buy_sell",
@@ -228,6 +251,7 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         </Badge>
       );
     },
+    enableSorting: false,
   },
   {
     id: "actions",
@@ -237,10 +261,10 @@ const transactionColumns: ColumnDef<Transaction>[] = [
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-4"
             size="icon"
           >
-            <IconDotsVertical />
+            <IconDotsVertical className="size-4" />
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
@@ -266,7 +290,7 @@ function DraggableRow({ row }: { row: Row<Position> }) {
       data-state={row.getIsSelected() && "selected"}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 h-12"
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -302,7 +326,9 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "ticker", desc: false },
+  ]);
   const [portfolioPagination, setPortfolioPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -438,19 +464,53 @@ export function DataTable({
             sensors={sensors}
             id={sortableId}
           >
-            <Table>
+            <Table style={{ tableLayout: "fixed" }}>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {portfolioTable.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="h-12">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
+                        <TableHead
+                          key={header.id}
+                          style={{
+                            width: `${header.getSize()}px`,
+                            minWidth: `${header.getSize()}px`,
+                          }}
+                        >
+                          {header.isPlaceholder ? null : (
+                            <div
+                              className={`flex items-center ${
+                                header.column.getCanSort()
+                                  ? "cursor-pointer select-none group"
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                if (header.column.getCanSort()) {
+                                  const currentSort =
+                                    header.column.getIsSorted();
+                                  header.column.toggleSorting(
+                                    currentSort === "asc"
+                                  );
+                                }
+                              }}
+                            >
+                              {flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
+                              {header.column.getIsSorted() ? (
+                                header.column.getIsSorted() === "asc" ? (
+                                  <IconChevronUp className="ml-2 h-4 w-4" />
+                                ) : (
+                                  <IconChevronDown className="ml-2 h-4 w-4" />
+                                )
+                              ) : (
+                                header.column.getCanSort() && (
+                                  <IconChevronUp className="ml-2 h-4 w-4 opacity-0 transition-opacity group-hover:opacity-50" />
+                                )
+                              )}
+                            </div>
+                          )}
                         </TableHead>
                       );
                     })}
@@ -563,9 +623,9 @@ export function DataTable({
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
               {transactionTable.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="h-12">
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -580,7 +640,7 @@ export function DataTable({
             <TableBody>
               {transactionTable.getRowModel().rows.length ? (
                 transactionTable.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="h-12">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(

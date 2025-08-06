@@ -8,6 +8,7 @@ import { ChartPortfolio } from "@/components/charts/chart-portfolio";
 import { ChartHoldings } from "@/components/charts/chart-holdings";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Watchlist } from "@/components/watchlist";
 import {
   getHoldingsChartData,
   getPortfolioChartData,
@@ -71,6 +72,11 @@ export default async function Page() {
                   fallback={<Skeleton className="h-[428px] rounded-xl" />}
                 >
                   <ChartHoldings chartData={holdingsChartData} />
+                </Suspense>
+                <Suspense
+                  fallback={<Skeleton className="h-[428px] rounded-xl" />}
+                >
+                  <Watchlist />
                 </Suspense>
               </div>
               <Suspense fallback={<Skeleton className="h-120 mx-6" />}>
