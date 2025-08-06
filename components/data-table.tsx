@@ -210,7 +210,7 @@ const transactionColumns: ColumnDef<Transaction>[] = [
     header: "Quantity",
     cell: ({ getValue }) => {
       const val = Number(getValue());
-      return val > 0 ? `+${val}` : `${val}`;
+      return Math.abs(val).toLocaleString();
     },
     enableSorting: false,
   },
