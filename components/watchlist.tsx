@@ -39,7 +39,13 @@ type WatchlistItem = {
 
 const ITEMS_PER_PAGE = 5;
 
-export function Watchlist() {
+export function Watchlist({
+  data: promise,
+}: {
+  data: Promise<WatchlistItem[]>;
+}) {
+  const data = React.use(promise);
+
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [prices, setPrices] = useState<Record<string, PriceData>>({});
   const [newTicker, setNewTicker] = useState("");
@@ -110,7 +116,7 @@ export function Watchlist() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Watchlist</CardTitle>
+        <CardTitle>Watchlist (To Be Implemented)</CardTitle>
         <CardDescription>
           {items.length > 0
             ? `Tracking ${items.length} assets`

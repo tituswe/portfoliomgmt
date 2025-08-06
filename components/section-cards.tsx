@@ -149,7 +149,7 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
 
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Cash Position</CardDescription>
+          <CardDescription>Cash Position (Not Implemented)</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {cash.toLocaleString("en-US", {
               style: "currency",

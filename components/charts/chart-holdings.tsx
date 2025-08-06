@@ -80,7 +80,7 @@ export function ChartHoldings({
             <Bar dataKey="percentage_change">
               <LabelList
                 dataKey="percentage_change"
-                position="bottom"
+                position="top"
                 formatter={(val: number) => `${val}%`}
               />
               {chartData.map((item) => (
