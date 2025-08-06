@@ -67,7 +67,10 @@ export function ChartHoldings({
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart data={chartData}>
+          <BarChart
+            data={chartData}
+            margin={{ top: 20, right: 10, left: 10, bottom: 0 }}
+          >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="ticker" />
             <ChartTooltip
