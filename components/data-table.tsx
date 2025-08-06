@@ -43,6 +43,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -337,6 +338,9 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [activeTab, setActiveTab] = React.useState("portfolio");
+  const [globalPortfolioFilter, setGlobalPortfolioFilter] = React.useState('');
+  const [globalTransactionFilter, setGlobalTransactionFilter] = React.useState('');
 
   const sortableId = React.useId();
   const sensors = useSensors(
@@ -359,6 +363,7 @@ export function DataTable({
       rowSelection,
       columnFilters,
       pagination: portfolioPagination,
+      globalFilter: globalPortfolioFilter,
     },
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
@@ -373,6 +378,8 @@ export function DataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    onGlobalFilterChange: setGlobalPortfolioFilter,
+    globalFilterFn: filterFunction,
   });
 
   const transactionTable = useReactTable({
@@ -380,10 +387,14 @@ export function DataTable({
     columns: transactionColumns,
     state: {
       pagination: transactionPagination,
+      globalFilter: globalTransactionFilter,
     },
     onPaginationChange: setTransactionPagination,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalTransactionFilter,
+    globalFilterFn: filterFunction,
   });
 
   function handleDragEnd(event: DragEndEvent) {
@@ -397,9 +408,18 @@ export function DataTable({
     }
   }
 
+  function filterFunction(row: any, columnId: any, value: any, addMeta: any) {
+    const cellValue = String(row.getValue(columnId)).toLowerCase();
+    const filterValue = String(value).toLowerCase();
+    return cellValue.includes(filterValue);
+  };
+
   return (
     <Tabs
       defaultValue="portfolio"
+      onValueChange={(value) => {
+        setActiveTab(value);
+      }}
       className="w-full flex-col justify-start gap-6"
     >
       <div className="flex items-center justify-between px-4 lg:px-6">
@@ -423,6 +443,18 @@ export function DataTable({
           <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
+        <Input
+          placeholder="Filter ticker or stock name"
+          value={activeTab === "portfolio" ? (portfolioTable.getState().globalFilter) ?? "" : (transactionTable.getState().globalFilter) ?? ""}
+          onChange={(event) => {
+            if (activeTab === "portfolio") {
+              portfolioTable.setGlobalFilter(event.target.value);
+            } else {
+              transactionTable.setGlobalFilter(event.target.value);
+            }
+          }}
+          className="flex-grow mx-4"
+        />
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuContent align="end" className="w-56">
