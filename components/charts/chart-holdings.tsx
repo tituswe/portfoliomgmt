@@ -62,7 +62,7 @@ export function ChartHoldings({
   return (
     <Card className="h-[480px]">
       <CardHeader>
-        <CardTitle>Top 5 Holdings' Performance</CardTitle>
+        <CardTitle>Top 5 Performers</CardTitle>
         <CardDescription>Percentage change in the last month</CardDescription>
       </CardHeader>
       <CardContent>
