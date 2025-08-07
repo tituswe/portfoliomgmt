@@ -68,7 +68,32 @@ export function ChartPortfolio({
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={({ active, payload }) => {
+                if (!active || !payload || payload.length === 0) return null;
+
+                const value = payload[0].value;
+                const ticker = payload[0].name;
+
+                if (typeof value !== "number" || !ticker) return null;
+                const percentage =
+                  totalValue > 0
+                    ? ((value / totalValue) * 100).toFixed(1)
+                    : "0.0";
+
+                return (
+                  <div className="bg-background p-3 rounded shadow border">
+                    <strong>{ticker}</strong>
+                    <div>
+                      $
+                      {value?.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </div>
+                    <div>{percentage}% of Portfolio</div>
+                  </div>
+                );
+              }}
             />
             <Pie
               data={coloredChartData}
