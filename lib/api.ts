@@ -1,37 +1,43 @@
 import { apiUrl } from "./env";
+import { revalidate } from "./revalidate";
 import { PortfolioSummary, Position, Transaction, PriceData } from "./types";
 
 export async function getPortfolioSummary() {
   const summary: PortfolioSummary = await fetch(`${apiUrl}/summary`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { tags: ["portfolio"] },
   }).then((res) => res.json());
   return summary;
 }
 
 export async function getPortfolioPerformanceChartData() {
   const chartData = await fetch(`${apiUrl}/charts/portfolio-linechart`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { tags: ["portfolio"] },
   }).then((res) => res.json());
   return chartData;
 }
 
 export async function getPortfolioChartData() {
   const chartData = await fetch(`${apiUrl}/charts/portfolio-piechart`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { tags: ["portfolio"] },
   }).then((res) => res.json());
   return chartData;
 }
 
 export async function getHoldingsChartData() {
   const chartData = await fetch(`${apiUrl}/charts/portfolio-barchart`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { tags: ["portfolio"] },
   }).then((res) => res.json());
   return chartData;
 }
 
 export async function getPortfolioData() {
   const posts: Position[] = await fetch(`${apiUrl}/portfolio`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { tags: ["portfolio"] },
   }).then((res) => res.json());
   return posts;
 }
@@ -40,10 +46,21 @@ export async function getTransactionsData() {
   const transactions: Transaction[] = await fetch(
     `${apiUrl}/transactions-table`,
     {
-      cache: "no-store",
+      cache: "force-cache",
+      next: { tags: ["portfolio"] },
     }
   ).then((res) => res.json());
   return transactions;
+}
+
+export async function getWatchlistData() {
+  return Promise.race([
+    fetch(`${apiUrl}/watchlist`, {
+      cache: "force-cache",
+      next: { tags: ["portfolio"] },
+    }).then((res) => res.json()),
+    new Promise((resolve) => setTimeout(() => resolve([]), 7000)),
+  ]);
 }
 
 export async function createTransaction(
@@ -70,6 +87,8 @@ export async function createTransaction(
     } catch {}
     throw new Error(msg);
   }
+
+  await revalidate();
 
   return res.json();
 }
@@ -99,6 +118,8 @@ export async function updateTransaction(
     throw new Error(msg);
   }
 
+  await revalidate();
+
   return res.json();
 }
 
@@ -115,6 +136,8 @@ export async function deleteTransaction(transactionId: string): Promise<void> {
     } catch {}
     throw new Error(msg);
   }
+
+  await revalidate();
 
   return res.json();
 }

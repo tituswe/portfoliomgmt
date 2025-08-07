@@ -96,7 +96,8 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Investment portfolio {invested_val_pct > 0 ? "increased" : "decreased"}{" "} this month
+            Investment portfolio{" "}
+            {invested_val_pct > 0 ? "increased" : "decreased"} this month
             {invested_val_pct > 0 ? (
               <IconTrendingUp className="size-4" />
             ) : (
@@ -188,7 +189,6 @@ export function SectionCards({ data }: { data: Promise<PortfolioSummary> }) {
           </div>
         </CardFooter>
       </Card>
-
     </div>
   );
 }

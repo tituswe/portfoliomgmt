@@ -110,7 +110,7 @@ export function CreateTransactionButton() {
               )}
               <Badge
                 variant={"secondary"}
-                className={isBuy ? "text-green-600" : "text-red-600"}
+                className={isBuy ? "text-green-600 w-10" : "text-red-600 w-10"}
               >
                 {isBuy ? "Buy" : "Sell"}
               </Badge>

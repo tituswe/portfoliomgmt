@@ -16,6 +16,7 @@ import {
   getPortfolioPerformanceChartData,
   getPortfolioSummary,
   getTransactionsData,
+  getWatchlistData,
 } from "@/lib/api";
 
 export default async function Page() {
@@ -25,6 +26,7 @@ export default async function Page() {
   const holdingsChartData = getHoldingsChartData();
   const portfolioData = getPortfolioData();
   const transactionData = getTransactionsData();
+  const watchlistData = getWatchlistData();
 
   return (
     <SidebarProvider
@@ -76,7 +78,7 @@ export default async function Page() {
                 <Suspense
                   fallback={<Skeleton className="h-[480px] rounded-xl" />}
                 >
-                  <Watchlist />
+                  <Watchlist data={watchlistData} />
                 </Suspense>
               </div>
               <Suspense fallback={<Skeleton className="h-120 mx-6" />}>
