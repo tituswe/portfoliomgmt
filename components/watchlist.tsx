@@ -116,7 +116,7 @@ export function Watchlist({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Watchlist (To Be Implemented)</CardTitle>
+        <CardTitle>Watchlist</CardTitle>
         <CardDescription>
           {items.length > 0
             ? `Tracking ${items.length} assets`
